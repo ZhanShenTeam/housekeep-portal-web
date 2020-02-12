@@ -73,11 +73,11 @@
           login2(){
               // 查询订单信息
               hk.http.get("/spu/sku/list?spu_id=2")
-                  .then(({data:{items,total}}) => {
-                      this.orders = items;
-                  }).catch(() => this.orders = [])
-          }
-      }
+          .then(({data:{items,total}}) => {
+              this.orders = items;
+          }).catch(() => this.orders = [])
+  }
+  }
   });
 </script>
 
