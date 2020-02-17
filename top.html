@@ -1,10 +1,10 @@
 <script src="./js/vue/vue.js"></script>
 <div id="searchBar">
     <div class="weui-search-bar" >
-    <form class="weui-search-bar__form">
+    <form class="weui-search-bar__form" action="pro_list.html" onsubmit=" return searchVm.submit()">
         <div class="weui-search-bar__box">
             <i class="weui-icon-search"></i>
-            <input type="search" class="weui-search-bar__input" autocomplete="off" onblur="searchVm. clearOntime()" onkeydown="searchVm.search()" v-model="key" id="searchInput" placeholder="搜索" required/>
+            <input type="search" class="weui-search-bar__input" autocomplete="off" onblur="searchVm. clearOntime()" v-model="key" id="searchInput" placeholder="搜索" required/>
             <a href="javascript:" class="weui-icon-clear" id="searchClear"></a>
         </div>
         <label class="weui-search-bar__label" id="searchText">
@@ -34,21 +34,22 @@
         methods:{
             clearOntime(){
                 setTimeout(function() {searchVm.clear()     //倒计时方法
-                },300);    //间隔为1s
+                },500);    //间隔为0.3s,防止onblur()时页面跳转失败
 
             },
             clear(){ searchVm.results=[];},
-            location(){
-               alert(111)
+            submit(){
+                $.cookie("key",searchVm.key);
             },
             search(){
+                if(searchVm.key){
                 $.ajax({
                         //请求方式
                         type : "GET",
                         //请求的媒体类型
                         contentType: "application/json;charset=UTF-8",
                         //请求地址
-                        url : "http://www.housekeep.com:8084/user/search",
+                        url : "http://www.housekeep.com:8084/goods/search",
                         //数据，json字符串
                         data : {
                             "key":searchVm.key,
@@ -67,7 +68,18 @@
                         }
                   })
 
-        }
+        }else{
+                    searchVm.results=[];
+                }
+            }
+    },
+    watch:{
+            'key':{
+                handler(){
+                    //searchVm.search();
+                }
+
+            }
     }
     });
 
