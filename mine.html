@@ -23,10 +23,10 @@
     <div class="weui-media-box weui-media-box_appmsg">
       <div class="weui-media-box__hd"><img class="weui-media-box__thumb radius" src="upload/headimg.jpg" alt=""></div>
       <div class="weui-media-box__bd">
-        <h4 class="weui-media-box__title user-name">{{username}}</h4>
+        <h4 class="weui-media-box__title user-name"><span v-html="username"></span></h4>
         <!--<input type="text" v-model="username"/>-->
-        <p class="user-grade">会员等级：{{level}}</p>
-        <p class="user-integral">用户余额：<em class="num">{{money}}</em>元</p>
+        <p class="user-grade">会员等级：<span v-html="cusLevel"></span></p>
+          <p class="user-integral">用户余额：<em class="num"><span v-html="cusMoney"></span></em>元</p>
       </div>
     </div>
 <!--    <div class="xx-menu weui-flex">
@@ -38,7 +38,7 @@
   <!--服务订单模块-->
   <div class="weui-panel weui-panel_access">
     <div class="weui-panel__hd">
-      <a href="all_orders.html" class="weui-cell weui-cell_access center-alloder">
+      <a href="service_orders.html?tabCode=all" class="weui-cell weui-cell_access center-alloder">
         <div class="weui-cell__bd wy-cell">
           <div class="weui-cell__hd"><img src="images/center-icon-order-all.png" alt="" class="center-list-icon"></div>
           <div class="weui-cell__bd weui-cell_primary"><p class="center-list-txt">服务订单</p></div>
@@ -49,25 +49,25 @@
     <div class="weui-panel__bd">
       <div class="weui-flex">
         <div class="weui-flex__item">
-          <a href="all_orders.html" class="center-ordersModule">
+          <a href="service_orders.html?tabCode=waitPay" class="center-ordersModule">
             <div class="imgicon"><img src="images/center-icon-order-dfk.png" /></div>
             <div class="name">待付款</div>
           </a>
         </div>
         <div class="weui-flex__item">
-          <a href="all_orders.html" class="center-ordersModule">
+          <a href="service_orders.html?tabCode=waitServe" class="center-ordersModule">
             <div class="imgicon"><img src="images/center-icon-order-dfh.png" /></div>
             <div class="name">待服务</div>
           </a>
         </div>
         <div class="weui-flex__item">
-          <a href="all_orders.html" class="center-ordersModule">
+          <a href="service_orders.html?tabCode=finished" class="center-ordersModule">
             <div class="imgicon"><img src="images/icon_nav_feedback.png" /></div>
             <div class="name">已完成</div>
           </a>
         </div>
         <div class="weui-flex__item">
-          <a href="orders.html" class="center-ordersModule">
+          <a href="service_orders.html?tabCode=waitComment" class="center-ordersModule">
             <div class="imgicon"><img src="images/center-icon-order-dpj.png" /></div>
             <div class="name">待评价</div>
           </a>
@@ -78,7 +78,7 @@
 <!--商城订单模块-->
   <div class="weui-panel weui-panel_access">
     <div class="weui-panel__hd">
-      <a href="all_orders.html" class="weui-cell weui-cell_access center-alloder">
+      <a href="service_orders.html" class="weui-cell weui-cell_access center-alloder">
         <div class="weui-cell__bd wy-cell">
           <div class="weui-cell__hd"><img src="images/marketorder.png" alt="" class="center-list-icon"></div>
           <div class="weui-cell__bd weui-cell_primary"><p class="center-list-txt">商城订单</p></div>
@@ -89,19 +89,19 @@
     <div class="weui-panel__bd">
       <div class="weui-flex">
         <div class="weui-flex__item">
-          <a href="all_orders.html" class="center-ordersModule">
+          <a href="service_orders.html" class="center-ordersModule">
             <div class="imgicon"><img src="images/center-icon-order-dfk.png" /></div>
             <div class="name">待付款</div>
           </a>
         </div>
         <div class="weui-flex__item">
-          <a href="all_orders.html" class="center-ordersModule">
+          <a href="service_orders.html" class="center-ordersModule">
             <div class="imgicon"><img src="images/center-icon-order-dfh.png" /></div>
             <div class="name">待发货</div>
           </a>
         </div>
         <div class="weui-flex__item">
-          <a href="all_orders.html" class="center-ordersModule">
+          <a href="service_orders.html" class="center-ordersModule">
             <div class="imgicon"><img src="images/icon_nav_feedback.png" /></div>
             <div class="name">已完成</div>
           </a>
@@ -156,7 +156,7 @@
                 </div>
                 <span class="weui-cell__ft"></span>
               </a>
-              <a class="weui-cell weui-cell_access" href="login.html">
+              <a class="weui-cell weui-cell_access" >
                 <div class="weui-cell__hd"><img src="images/center-icon-out.png" alt="" class="center-list-icon"></div>
                 <div class="weui-cell__bd weui-cell_primary">
                   <p class="center-list-txt">退出账号</p>
@@ -202,30 +202,50 @@
 
 <script src="node_modules/vue/dist/vue.js"></script>
 <script>
-  const app = new Vue({
+  let app = new Vue({
     el:"#app",
     data:{
-      username:""
+      username:"",
+      cusId:"",
+      cusLevel:"",
+      cusMoney:""
     },
-    method:{
-
-    },
-    created() {
-      // $(function () {
-      //   this.username = $.cookie("username")
-      // })
-
-      let cs = document.cookie
-      let csarr = cs.split(";")
-      for (let i = 0;i < csarr.length;i++){
-        let carr = csarr[i].split("=")
-        if (carr[0] == "username") {
-          this.username = carr[1]
-        }
+    methods:{
+      getCustomer(){
+          $.ajax({
+              //请求方式
+              type : "GET",
+              //请求的媒体类型
+              contentType: "application/json;charset=UTF-8",
+              //请求地址
+              url : "http://127.0.0.1:8083/test/customer",
+              //数据，json字符串
+              data : {
+                  "cusId":this.cusId
+              },
+              dataType:"json",
+              success: function(data){
+                  app.cusLevel = data.cusLevel
+                  app.cusMoney = data.cusMoney
+              },
+              error: function() {
+                  alert("出错了！")
+              }
+          })
       }
+    },
+    created:function() {
+      // 取cookie中的username，cusId
+      $(function () {
+        app.username = $.cookie("username")
+        app.cusId = $.cookie("cusId")
+      })
+        //查用户等级和余额
+      $(function () {
+          app.getCustomer()
+      })
     }
   })
-
 
 </script>
 
