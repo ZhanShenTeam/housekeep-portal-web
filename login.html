@@ -85,19 +85,19 @@
                   //请求成功
                   success : function(result)
                   {
-                      $.cookie("username",result.username, {path:'/', domain:"127.0.0.1"});
-                      $.cookie("password",result.password, {path:'/', domain:"127.0.0.1"});
-                      $.cookie("cusId",result.cusId, {path:'/', domain:"127.0.0.1"});
-                      $.cookie("idType",result.idType, {path:'/', domain:"127.0.0.1"});
-                      $.cookie("realName",result.realName, {path:'/', domain:"127.0.0.1"});
-                      $.cookie("idNumber",result.idNumber, {path:'/', domain:"127.0.0.1"});
-                      $.cookie("mobilePhone",result.mobilePhone, {path:'/', domain:"127.0.0.1"});
-                      $.cookie("email",result.email, {path:'/', domain:"127.0.0.1"});
-                      $.cookie("gender",result.gender, {path:'/', domain:"127.0.0.1"});
-                      $.cookie("userPoint",result.userPoint, {path:'/', domain:"127.0.0.1"});
-                      $.cookie("userLevel",result.userLevel, {path:'/', domain:"127.0.0.1"});
-                      $.cookie("userMoney",result.userMoney, {path:'/', domain:"127.0.0.1"});
-                      $.cookie("lastLoginTime",result.lastLoginTime, {path:'/', domain:"127.0.0.1"});
+                      $.cookie("username",result.username);
+                      $.cookie("password",result.password);
+                      $.cookie("cusId",result.cusId);
+                      $.cookie("idType",result.idType);
+                      $.cookie("realName",result.realName);
+                      $.cookie("idNumber",result.idNumber);
+                      $.cookie("mobilePhone",result.mobilePhone);
+                      $.cookie("email",result.email);
+                      $.cookie("gender",result.gender);
+                      $.cookie("userPoint",result.userPoint);
+                      $.cookie("userLevel",result.userLevel);
+                      $.cookie("userMoney",result.userMoney);
+                      $.cookie("lastLoginTime",result.lastLoginTime);
                       window.location.href="index.html";
                   },
                   //请求失败，包含具体的错误信息
