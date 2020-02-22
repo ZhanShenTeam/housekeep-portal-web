@@ -10,48 +10,124 @@
 <link rel="stylesheet" href="lib/weui.min.css">
 <link rel="stylesheet" href="css/jquery-weui.css">
 <link rel="stylesheet" href="css/style.css">
+  <script src="js/jquery-2.1.4.js"></script>
+  <script src="js/jquery.cookie.js"></script>
 </head>
 <body ontouchstart>
+<div id="app">
 <!--主体-->
 <header class="wy-header">
-  <div class="wy-header-icon-back"><span></span></div>
+  <a href="address_list.html"><div class="wy-header-icon-back"><span></span></div></a>
   <div class="wy-header-title">编辑地址</div>
 </header>
 <div class="weui-content">
   <div class="weui-cells weui-cells_form wy-address-edit">
     <div class="weui-cell">
-      <div class="weui-cell__hd"><label class="weui-label wy-lab">收货人</label></div>
-      <div class="weui-cell__bd"><input class="weui-input" type="number" pattern="[0-9]*" placeholder="陈大鹏"></div>
+      <div class="weui-cell__hd"><label class="weui-label wy-lab" >收货人</label></div>
+      <div class="weui-cell__bd"><input class="weui-input"  placeholder="" v-html="receiver" v-model="receiver"></div>
     </div>
     <div class="weui-cell">
       <div class="weui-cell__hd"><label class="weui-label wy-lab">手机号</label></div>
-      <div class="weui-cell__bd"><input class="weui-input" type="number" pattern="[0-9]*" placeholder="18951263540"></div>
+      <div class="weui-cell__bd"><input class="weui-input" type="number" pattern="[0-9]*" placeholder="" v-model="phone"></div>
     </div>
     <div class="weui-cell">
       <div class="weui-cell__hd"><label for="name" class="weui-label wy-lab">所在地区</label></div>
-      <div class="weui-cell__bd"><input class="weui-input" id="address" type="text" value="湖北省 武汉市 武昌区" readonly="" data-code="420106" data-codes="420000,420100,420106"></div>
+      <div class="weui-cell__bd"><input class="weui-input" id="address" type="text" value="" readonly="" data-code="420106" data-codes="420000,420100,420106" v-model="addressHeader"></div>
     </div>
     <div class="weui-cell">
       <div class="weui-cell__hd"><label class="weui-label wy-lab">详细地址</label></div>
       <div class="weui-cell__bd">
-        <textarea class="weui-textarea" placeholder="洋河新区电商产业园2楼东侧最里面第二间办公室"></textarea>
+        <textarea class="weui-textarea" placeholder="" v-model="addressBody"></textarea>
       </div>
     </div>
-    <div class="weui-cell weui-cell_switch">
-      <div class="weui-cell__bd">设为默认地址</div>
-      <div class="weui-cell__ft"><input class="weui-switch" type="checkbox"></div>
-    </div>
+
   </div> 
   <div class="weui-btn-area">
-    <a class="weui-btn weui-btn_primary" href="javascript:" id="showTooltips">保存此地址</a>
-    <a href="javascript:;" class="weui-btn weui-btn_warn">删除此地址</a>
+    <a class="weui-btn weui-btn_primary" href="address_list.html" id="showTooltips" @click="addAddress">保存此地址</a>
+    <a href="address_list.html" class="weui-btn weui-btn_warn" @click="deleteAddress">删除此地址</a>
   </div>
 
 </div>
+</div>
 
-<script src="lib/jquery-2.1.4.js"></script> 
+<!--<script src="lib/jquery-2.1.4.js"></script> -->
 <script src="lib/fastclick.js"></script> 
 <script type="text/javascript" src="js/jquery.Spinner.js"></script>
+<script src="node_modules/vue/dist/vue.js"></script>
+<script>
+  let app = new Vue({
+    el:"#app",
+    data:{
+      addressId:"",
+      cusId:"",
+      receiver:"",
+      addressHeader:"",
+      addressBody:"",
+      phone:"",
+      address:""
+    },
+    methods:{
+      addAddress(){
+        app.address = (app.addressHeader+app.addressBody).replace(/,/g, "")
+        $.ajax({
+          type: "POST",
+          url: "http://127.0.0.1:8083/test/saveAddress",
+          data: {
+            "cusId":app.cusId,
+            "receiver":app.receiver,
+            "phone":app.phone,
+            "address":app.address,
+            "addressId":app.addressId
+          },
+          dataType: "JSON",
+          success: function(result) {
+          }
+        });
+      },
+      getAddressInfo(){
+        $.ajax({
+          type: "GET",
+          contentType: "application/json;charset=UTF-8",
+          url : "http://127.0.0.1:8083/test/addressInfo",
+          data : {
+            "addressId":app.addressId
+          },
+          dataType:"json",
+          success: function(data){
+            app.phone = data.phone
+            app.receiver = data.receiver
+            var reg = /.+?(省|市|自治区|自治州|县|区)/g;
+            app.addressHeader = data.address.match(reg)
+            app.addressBody = data.address.substring(app.addressHeader.toString().replace(/,/g, "").length)
+          },
+          error: function() {
+            alert("出错了！")
+          }
+        })
+      },
+      deleteAddress(){
+        $.ajax({
+          type: "POST",
+          url: "http://127.0.0.1:8083/test/deleteAddress",
+          data: {
+            "addressId":app.addressId
+          },
+          dataType: "JSON",
+          success: function(result) {
+          }
+        });
+      }
+    },
+    created:function () {
+      $(function () {
+        app.cusId = $.cookie("cusId")
+        app.addressId=window.location.href.split("?")[1].split("=")[1];
+        app.getAddressInfo()
+
+      })
+    }
+  })
+</script>
 <script>
   $(function() {
     FastClick.attach(document.body);
@@ -65,6 +141,7 @@
         title: "选择出发地",
         onChange: function (picker, values, displayValues) {
           console.log(values, displayValues);
+          app.addressHeader =displayValues
         }
       });
     </script>
