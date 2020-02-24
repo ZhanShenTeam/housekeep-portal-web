@@ -25,9 +25,9 @@
 
   <div class="pro-sort">
     <div class="weui-flex">
-      <div class="weui-flex__item"><div class="placeholder NormalCss">综合</div></div>
-      <div class="weui-flex__item"><div class="placeholder SortAscCss">按销量</div></div>
-      <div class="weui-flex__item"><div class="placeholder SortDescCss">按价格</i></div></div>
+      <div class="weui-flex__item"><div class="placeholder NormalCss" onclick="zonghe()">综合</div></div>
+      <div class="weui-flex__item"><div id="priceSort" onclick="sortByPrice()" class="placeholder SortDescCss">按价格</i></div></div>
+      <div class="weui-flex__item"><div onclick="sortBySale()"class="placeholder SortAscCss">按销量</div></div>
     </div>
   </div>
 </header>
@@ -37,7 +37,7 @@
 
   <div id="list" class='demos-content-padded proListWrap'  v-for="(result,index) in results" :key="index">
     <div class="pro-items">
-      <a href="pro_info.html" class="weui-media-box weui-media-box_appmsg">
+      <a :href ="'pro_info.html?goodsId='+result.goodsId" class="weui-media-box weui-media-box_appmsg">
         <div class="weui-media-box__hd"><img class="weui-media-box__thumb" :src="result.goodsImageAddr" alt=""></div>
         <div class="weui-media-box__bd">
           <h1 class="weui-media-box__desc">{{result.goodsName}}</h1>
@@ -60,12 +60,33 @@
 
 <script src="lib/fastclick.js"></script>
 <script>
+
   $(function() {
     FastClick.attach(document.body);
     vm.key=$.cookie("key");
     load();
   });
+  function zonghe(){
+    vm.sortByPrice="";
+    load();
+  }
 
+  function sortByPrice(){
+    if(!vm.sortByPrice){
+      vm.sortByPrice="desc"
+    }else if(vm.sortByPrice == "desc"){
+      vm.sortByPrice="asc";
+      $("#priceSort").attr("class","placeholder SortAscCss");
+    }else if(vm.sortByPrice == "asc"){
+      vm.sortByPrice="desc";
+      $("#priceSort").attr("class","placeholder SortDescCss");
+    }
+    load();
+
+  }
+  function sortBySale(){
+    console.log("该功能暂未实现")
+  }
 
   $(window).scroll(
           function() {
@@ -99,12 +120,14 @@
         "key":vm.key,
         "status":1,
         "page":1,
-        "rows":10
+        "rows":10,
+        "sortByPrice":vm.sortByPrice,
       },
       //请求成功
       success : function(result)
       {
         const items = JSON.stringify(result.items)
+
         vm.results=JSON.parse(items);
         vm.totalPage=JSON.stringify(result.totalPage)
 
@@ -133,6 +156,7 @@
         "status":1,
         "page":vm.query.page,
         "rows":10,
+        "sortByPrice":vm.sortByPrice,
       },
       //请求成功
       success : function(result)
@@ -156,6 +180,7 @@
     data: {
       key:"",
       results:[],
+      sortByPrice:"",
       loading:"false",
       query:{
         status:1,
