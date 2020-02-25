@@ -297,6 +297,11 @@ header,.weui-navbar{
 .wy-center-top{width:100%; overflow:hidden; background:url(../images/center-top-bj.jpg) no-repeat; background-size:cover;}
 .wy-center-top .userinfo{padding:0}
 .wy-center-top .xx-menu{height:44px; background:rgba(0,0,0,.3);}
+
+.wy-center-top2{width:100%; overflow:hidden; background:url(../images/huiyuan2.jpg) no-repeat; background-size:cover;}
+.wy-center-top2 .userinfo{padding:0}
+.wy-center-top2 .xx-menu{height:44px; background:rgba(0,0,0,.3);}
+
 .user-name{color:#fff; font-weight:600; font-size:16px;}
 .user-grade{color:#FC0; margin:2px 0; font-size:13px;}
 .user-integral{font-size:13px; color:#fafafa;}
