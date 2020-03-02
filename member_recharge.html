@@ -1,0 +1,114 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <title>会员充值</title>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+    <meta name="description" content="Write an awesome description for your new site here. You can edit this line in _config.yml. It will appear in your document head meta (for Google search results) and in your feed.xml site description.
+">
+    <link rel="stylesheet" href="lib/weui.min.css">
+    <link rel="stylesheet" href="css/jquery-weui.css">
+    <link rel="stylesheet" href="css/style.css">
+    <script src="js/jquery-2.1.4.js"></script>
+    <script src="js/jquery.cookie.js"></script>
+</head>
+<body ontouchstart>
+<div id="app">
+<!--主体-->
+<header class="wy-header">
+    <a href="mymember.html"><div class="wy-header-icon-back"><span></span></div></a>
+    <div class="wy-header-title">会员充值</div>
+</header>
+<div class="weui-content">
+
+
+    <div class="weui-panel">
+        <div class="weui-panel__bd">
+            <div class="weui-media-box weui-media-box_small-appmsg">
+                <div class="weui-cells">
+                    <div class="weui-cell weui-cell_access">
+                        <div class="weui-cell__bd weui-cell_primary">
+                            <p class="font-14"><span class="mg-r-10">充值账户</span><span class="fr" v-html="mobilePhone"></span></p>
+                        </div>
+                    </div>
+                    <div class="weui-cell weui-cell_access" href="javascript:;">
+                        <div class="weui-cell__bd weui-cell_primary">
+                            <p class="font-14"><span class="mg-r-10">充值金额</span><span class="fr txt-color-red"><em class="num" v-html="recharge"></em>元</span></p>
+                        </div>
+                    </div>
+                    <div class="weui-cell weui-cell_access" href="javascript:;">
+                        <div class="weui-cell__bd weui-cell_primary">
+                            <p class="font-14"><span class="mg-r-10">会员专享</span></p>
+                        </div>
+                        <div class="weui-panel__hd"><a href="payment_preferences.html">支付优惠</a></div>
+                        <div class="weui-panel__hd"><a href="coupon.html">优惠券礼包</a></div>
+                        <div class="weui-panel__hd"><a href="market_welfare.html">商城福利</a></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="wy-media-box weui-media-box_text">
+        <div class="mg10-0 t-c">总金额：<span class="wy-pro-pri mg-tb-5">¥<em class="num font-20" v-html="recharge"></em></span></div>
+        <div class="mg10-0"><a href="shopcart.html" class="weui-btn weui-btn_primary">立即支付</a></div>
+
+    </div>
+    <div class="weui-footer">
+        <p class="weui-footer__text">点击立即支付即代表您同意<a href="recharge_agreement.html">《充值协议》</a>、<a href="member_agreement.html">《housekeep普通会员用户协议》</a></p>
+    </div>
+</div>
+</div>
+<!--<script src="lib/jquery-2.1.4.js"></script>-->
+<script src="lib/fastclick.js"></script>
+<script src="node_modules/vue/dist/vue.js"></script>
+<script>
+    let app = new Vue({
+        el:"#app",
+        data:{
+            cusId:"",
+            recharge:"",
+            mobilePhone:""
+        },
+        methods:{
+            getCustomer(){
+                $.ajax({
+                    type : "GET",
+                    contentType: "application/json;charset=UTF-8",
+                    url : "http://127.0.0.1:8083/test/customer",
+                    data : {
+                        "cusId":this.cusId
+                    },
+                    dataType:"json",
+                    success: function(data){
+                        app.mobilePhone = data.mobilePhone
+                    },
+                    error: function() {
+                    }
+                })
+            }
+        },
+        created:function () {
+            this.recharge=window.location.href.split("?")[1].split("=")[1];    //只能用this，不能用app
+            // 取cookie中的username，cusId
+            $(function () {
+                app.cusId = $.cookie("cusId")
+                app.getCustomer()
+            })
+        }
+    })
+</script>
+
+
+<script>
+    $(function() {
+        FastClick.attach(document.body);
+    });
+</script>
+<script src="js/jquery-weui.js"></script>
+
+
+</body>
+</html>
+
+

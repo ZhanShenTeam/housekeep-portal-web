@@ -1,0 +1,152 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<title>我的会员</title>
+<meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+<meta name="description" content="Write an awesome description for your new site here. You can edit this line in _config.yml. It will appear in your document head meta (for Google search results) and in your feed.xml site description.
+">
+<link rel="stylesheet" href="lib/weui.min.css">
+<link rel="stylesheet" href="css/jquery-weui.css">
+<link rel="stylesheet" href="css/style.css">
+  <script src="js/jquery-2.1.4.js"></script>
+  <script src="js/jquery.cookie.js"></script>
+</head>
+<body ontouchstart>
+<div id="app">
+<!--顶部搜索-->
+<header class="wy-header">
+  <a href="mine.html"><div class="wy-header-icon-back"><span></span></div></a>
+  <div class="wy-header-title">我的会员</div>
+</header>
+
+<div class="wy-center-top2">
+  <div class="weui-media-box weui-media-box_appmsg">
+    <div class="weui-media-box__bd">
+      <p class="user-grade"><span v-html="cusLevel"></span>&nbsp;用户</p>
+      <p class="user-integral">余额：<em class="num"><span v-html="cusMoney"></span></em>元</p>
+    </div>
+  </div>
+</div>
+
+<!--主体-->
+<div class="weui-cells">
+  <div class="weui-cell">
+    <div class="weui-cell__hd"><img src="images/center-icon-jk2.png"></div>
+    <div class="weui-cell__bd">
+      <h4>&nbsp;充值880元 - 青铜VIP</h4>
+    </div>
+    <a href="member_recharge.html?recharge=880" class="weui-btn weui-btn_plain-primary">立即充值</a>
+  </div>
+  <div class="weui-cell">
+    <div class="weui-cell__hd"><img src="images/center-icon-jk2.png"></div>
+    <div class="weui-cell__bd">
+      <h4>&nbsp;充值1680元 - 黄金VIP</h4>
+    </div>
+    <a href="member_recharge.html?recharge=1680" class="weui-btn weui-btn_plain-primary">立即充值</a>
+  </div>
+  <div class="weui-cell">
+    <div class="weui-cell__hd"><img src="images/center-icon-jk2.png"></div>
+    <div class="weui-cell__bd">
+      <h4>&nbsp;充值2980元 - 铂金VIP</h4>
+    </div>
+    <a href="member_recharge.html?recharge=2980" class="weui-btn weui-btn_plain-primary">立即充值</a>
+  </div><div class="weui-cell">
+    <div class="weui-cell__hd"><img src="images/center-icon-jk2.png"></div>
+    <div class="weui-cell__bd">
+      <h4>&nbsp;充值3980元 - 钻石VIP</h4>
+    </div>
+    <a href="member_recharge.html?recharge=3980" class="weui-btn weui-btn_plain-primary">立即充值</a>
+  </div>
+  <div class="weui-cell">
+    <div class="weui-cell__hd"><img src="images/center-icon-jk2.png"></div>
+    <div class="weui-cell__bd">
+      <h4>&nbsp;充值4980元 - 至尊VIP</h4>
+    </div>
+    <a href="member_recharge.html?recharge=4980" class="weui-btn weui-btn_plain-primary">立即充值</a>
+  </div>
+</div>
+
+<div class="weui-loadmore weui-loadmore_line">
+  <span class="weui-loadmore__tips">会员特权</span>
+</div>
+<div class="weui-grids">
+  <a href="payment_preferences.html" class="weui-grid js_grid">
+    <div class="weui-grid__icon">
+      <img src="images/menber.png" alt="">
+    </div>
+    <p class="weui-grid__label">
+      会员支付优惠
+    </p>
+  </a>
+  <a href="coupon.html" class="weui-grid js_grid">
+    <div class="weui-grid__icon">
+      <img src="images/icon-link4.png" alt="">
+    </div>
+    <p class="weui-grid__label">
+      优惠券礼包
+    </p>
+  </a> <a href="market_welfare.html" class="weui-grid js_grid">
+    <div class="weui-grid__icon">
+      <img src="images/footer003.png" alt="">
+    </div>
+    <p class="weui-grid__label">
+      商城福利
+    </p>
+  </a>
+
+</div>
+</div>
+
+<script src="node_modules/vue/dist/vue.js"></script>
+<script>
+  let app = new Vue({
+    el:"#app",
+    data:{
+      cusId:"",
+      cusLevel:"",
+      cusMoney:""
+    },
+    methods:{
+      getCustomer(){
+        $.ajax({
+          type : "GET",
+          contentType: "application/json;charset=UTF-8",
+          url : "http://127.0.0.1:8083/test/customer",
+          data : {
+            "cusId":this.cusId
+          },
+          dataType:"json",
+          success: function(data){
+            app.cusLevel = data.cusLevel
+            app.cusMoney = data.cusMoney
+          },
+          error: function() {
+          }
+        })
+      }
+    },
+    created:function () {
+      // 取cookie中的username，cusId
+      $(function () {
+        app.cusId = $.cookie("cusId")
+      })
+      //查用户等级和余额
+      $(function () {
+        app.getCustomer()
+      })
+    }
+  })
+</script>
+
+<!--<script src="lib/jquery-2.1.4.js"></script> -->
+<script src="lib/fastclick.js"></script> 
+<script>
+  $(function() {
+    FastClick.attach(document.body);
+  });
+</script> 
+<script src="js/jquery-weui.js"></script>
+</body>
+</html>
