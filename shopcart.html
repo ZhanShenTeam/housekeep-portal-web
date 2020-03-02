@@ -20,7 +20,7 @@
   <div class="wy-header-title">购物车</div>
 </header>
 <div class="weui-content" id="cartApp">
-<form>
+
   <div class="weui-panel weui-panel_access" v-for="(item,index) in items" :key="index">
     <div class="weui-panel__bd" >
       <div class="weui-media-box_appmsg pd-10">
@@ -84,13 +84,13 @@
 <script>
 
   var cusId = $.cookie("cusId");
-function  load() {
-  let total;
-  if (!cusId) {
-    alert("请您先登录")
-    setTimeout("window.location.href='login.html'", 1000)
-  }
-     query();
+  function  load() {
+    let total;
+    if (!cusId) {
+      alert("请您先登录")
+      setTimeout("window.location.href='login.html'", 1000)
+    }
+    query();
 
   }
 

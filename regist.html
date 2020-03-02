@@ -22,32 +22,34 @@
     <div class="weui-cell">
       <div class="weui-cell__hd"><label class="weui-label wy-lab">用户名</label></div>
       <div class="weui-cell__bd"><input class="weui-input" type="text"v-model="username" placeholder="请输入用户名"></div>
+      <span style="display: none" id="span2"></span>
     </div>
     <div class="weui-cell weui-cell_vcode">
       <div class="weui-cell__hd"><label class="weui-label wy-lab">手机号</label></div>
       <div class="weui-cell__bd"><input class="weui-input" type="tel" v-model="mobilePhone" placeholder="请输入手机号"></div>
-      <div class="weui-cell__ft"><input class="weui-btn weui-btn_default"  id="idCode"type="button"value="获取验证码" @click="newIdentityCode(),time()"></div>
+      <span style="display: none;color: #ce3c39;" id="Phonespan">请输入正确的手机号格式</span>
+      <div class="weui-cell__ft"><input class="weui-btn weui-btn_default" disabled="true" id="idCode"type="button"value="获取验证码" onclick="getCode(),time()"></div>
     </div>
     <div class="weui-cell">
       <div class="weui-cell__hd"><label class="weui-label wy-lab">验证码</label></div>
-      <div class="weui-cell__bd"><input class="weui-input" type="number"v-model="Code" placeholder="请输入验证码"></div>
-      <span style="display: none" id="span2">验证码错误</span>
+      <div class="weui-cell__bd"><input class="weui-input" type="number"v-model="code" placeholder="请输入验证码"></div>
     </div>
     <div class="weui-cell">
       <div class="weui-cell__hd"><label class="weui-label wy-lab">设置密码</label></div>
-      <div class="weui-cell__bd"><input class="weui-input" type="number" v-model="password" pattern="[0-9]*" placeholder="请输入新密码"></div>
+      <div class="weui-cell__bd"><input class="weui-input" type="password" v-model="password" pattern="[a-zA-Z0-9]*" placeholder="请输入新密码"></div>
+      <span style="display: none;" id="span3"></span>
     </div>
     <div class="weui-cell">
       <div class="weui-cell__hd"><label class="weui-label wy-lab">确认密码</label></div>
-      <div class="weui-cell__bd"><input class="weui-input" type="number"v-model="rePassword" pattern="[0-9]*" placeholder="请再次输入新密码"></div>
-      <span style="display: none" id="span">两次密码必须保持一致</span>
+      <div class="weui-cell__bd"><input class="weui-input" type="password"v-model="rePassword" pattern="[a-zA-Z0-9]*" placeholder="请再次输入新密码"></div>
+      <span style="display: none" id="span"></span>
     </div>
   </div>
   <label for="weuiAgree" class="weui-agree">
     <input id="weuiAgree" type="checkbox" class="weui-agree__checkbox" checked="checked">
     <span class="weui-agree__text">阅读并同意<a href="javascript:void(0);">《注册协议》</a></span>
   </label>
-  <div class="weui-btn-area"><a href="javascript:;" class="weui-btn weui-btn_warn" @click="registry()">注册并登陆</a></div>
+  <div class="weui-btn-area"><a href="javascript:;"  class="weui-btn weui-btn_warn"  onclick="registry()">注册</a></div>
   <div class="weui-cells__tips t-c font-12">登陆账号为您输入的手机号码</div>
   <div class="weui-cells__tips t-c pd-10"><a href="xieyi.html" class="weui-cell_link font-12">查看注册协议</a></div>
   
@@ -62,115 +64,157 @@
 
 </script>
 <script>
-  var wait = 10;
+
   $(function() {
     FastClick.attach(document.body);
   });
-  var RegistryVm = new Vue({
+  //验证码定时60s
+  var wait = 60;
+  function time(){
+    if(wait==0) {
+      $("#idCode").removeAttr("disabled");
+      $("#idCode").val("获取验证码");
+      wait=60;
+    }else{
+      $("#idCode").attr("disabled","true");
+      $("#idCode").val(wait+"秒后重试");
+      wait=wait-1;
+      setTimeout(function() {     //倒计时方法
+        time();
+      },1000);    //间隔为1s
+    }
+  }
+  var id=0;
+  //获取验证码
+
+  function getCode(){
+    id=parseInt((1+Math.random()*9)*1000000);
+    $.ajax({
+      type: "get",
+      url: "http://127.0.0.1:8084/customer/sendSms",
+      contentType: "application/json;charset=utf-8",
+      data : {"mobilePhone":vm.mobilePhone, "id":id}
+      ,
+      success: function (data) {
+      },
+      error: function (e) {
+        console.log(e.status);
+        console.log(e.msg);
+      }
+    })
+  }
+  //后台注册
+  function  registry(){
+
+
+    if(!vm.testUsername()){return};
+    if(!vm.testMobilePhone()){return};
+    if(!vm.testRePassword()){return};
+    if(!$("#weuiAgree").prop("checked")){return};
+
+
+    if (!vm.testPassword()){return};
+
+
+    var formData = new FormData();
+    formData.append("username",vm.username);
+    formData.append("password",vm.password);
+    formData.append("mobilePhone",vm.mobilePhone);
+    formData.append("code",vm.code);
+    formData.append("id",id);
+      $.ajax({
+        type: "post",
+        url: "http://127.0.0.1:8084/customer/registry",
+        contentType: "application/x-www-form-urlencoded",
+        data : formData,
+        async:false,
+        contentType: false,
+        processData: false,
+        dataType:'text',
+        success: function (data) {
+          window.location.href="login.html";
+        },
+        error: function (e) {
+          const responseText = JSON.parse(e.responseText);
+
+          console.log(e.status);
+          console.log(e.responseText);
+        }
+      })
+
+  }
+
+  var vm = new Vue({
     el: "#RegistryApp",
     data: {
         username:"",
         mobilePhone:"",
-        Code:"",
-        identifyCode:"1234",
+        code:"",
         password:"",
         rePassword:"",
         flag:"false",
     },
     methods:{
-      newIdentityCode(){
-        const json={"mobilePhone":RegistryVm.mobilePhone,};
-        console.log(json);
-        $.ajax({
-          type: "post",
-          url: "http://www.housekeep.com:8084/user/identify",
-          contentType: "application/json;charset=utf-8",
-          data : JSON.stringify(json),
-          success: function (data) {
-            RegistryVm.identifyCode=data.identifyCode;
-          },
-          error: function (e) {
-            console.log(e.status);
-            console.log(e.responseText);
-          }
-        })
-      },
-      time(){
-        if(wait==0) {
-          $("#idCode").removeAttr("disabled");
-          $("#idCode").val("获取验证码");
-          wait=10;
+      testUsername(){
+        var regUsername =/^[\u4e00-\u9fa5A-Za-z0-9-_]{2,8}$/;
+        if(!regUsername.test(this.username)){
+          $("#span2").html("用户名为2-8位,可含中文,英文字母,数字")
+          $("#span2").attr("style","display: block;color: #ce3c39;")
+          return false;
         }else{
-          $("#idCode").attr("disabled","true");
-          $("#idCode").val(wait+"秒后重试");
-          console.log(wait);
-          wait=wait-1;
-          setTimeout(function() {     //倒计时方法
-            RegistryVm.time();
-          },1000);    //间隔为1s
-        }
-      },
-      registry(){
-        RegistryVm.test();
-        if(RegistryVm.flag =="true"){
-          const json={"username":RegistryVm.username,
-            "mobilePhone":RegistryVm.mobilePhone,
-            "password":RegistryVm.password,
-            "identifyCode":RegistryVm.identifyCode};
           $.ajax({
-            type: "post",
-            url: "http://www.housekeep.com:8084/user/registry",
+            type: "get",
+            url: "http://127.0.0.1:8084/customer/isReUsername",
             contentType: "application/json;charset=utf-8",
-            data : JSON.stringify(json),
+            data : {"username": this.username},
             success: function (data) {
-              $.cookie("username",RegistryVm.username);
-              $.cookie("password",RegistryVm.password);
-              window.location.href="login.html";
+              $("#span2").html("恭喜您,用户名可用")
+              $("#span2").attr("style","display: block;color: #0BB20C;")
+
             },
             error: function (e) {
               console.log(e.status);
               console.log(e.responseText);
+              $("#span2").html("用户名重复了,请重新更换")
+              $("#span2").attr("style","display: block;color: #ce3c39;")
+              return false;
             }
           })
-        }else{
-          alert("注册错误")
+          return true;
         }
-
-      },
-      test(){
-        if(RegistryVm.username){
-          if(RegistryVm.mobilePhone){
-            if(RegistryVm.Code==RegistryVm.identifyCode){
-              if(RegistryVm.password==RegistryVm.rePassword){
-                if($("#weuiAgree").is(":checked")){
-                  RegistryVm.flag="true";
-                }
-              }
-            }
-          }
-        }
-
       },
       testMobilePhone(){
-        if (!RegistryVm.mobilePhone) {
-          alert("手机号码不能为空");
-        }
+        var regMobile=/^1\d{10}$/;
+          if(!regMobile.test(vm.mobilePhone)){
+            $("#Phonespan").attr("style","display: block;color: #ce3c39;")
+            $("#idCode").attr("disabled","true")
+            return false;
+          }else{
+            $("#Phonespan").attr("style","display: none")
+            $("#idCode").removeAttr("disabled")
+            return true;
+          }
 
       },
-      testIdentifyCode(){
-        if(RegistryVm.Code!=RegistryVm.identifyCode){
-          $("#span2").attr("style","display: block")
-          RegistryVm.flag="false";
-        }else{
-          $("#span2").attr("style","display: none")
-        }
-      },
       testRePassword(){
-        if(RegistryVm.password!=RegistryVm.rePassword){
-          $("#span").attr("style","display: block")
-          RegistryVm.flag="false";
+        if(this.password!=this.rePassword){
+          $("#span").html("两次密码必须一致")
+          $("#span").attr("style","display: block;color: #ce3c39;")
+          return false;
         }else{
           $("#span").attr("style","display: none")
+          return true;
+        }
+      },
+      testPassword(){
+        var regPassword=/^[a-zA-Z0-9]{4,10}$/;
+        if(regPassword.test(this.password)){
+          $("#span3").attr("style","display: none")
+          return true;
+        }else{
+          $("#span3").html("密码只能为数字或英文,且只可在4-10位")
+          $("#span3").attr("style","display: block;color: #ce3c39;")
+          return false;
         }
       }
     },
@@ -178,19 +222,25 @@
       'mobilePhone':{
         deep:true,
         handler(){
-          RegistryVm.testMobilePhone();
+          vm.testMobilePhone();
         }
       },
       'rePassword':{
         deep:true,
         handler(){
-          RegistryVm.testRePassword();
+          vm.testRePassword();
         }
       },
-      "Code":{
+      'password':{
         deep:true,
         handler(){
-          RegistryVm.testIdentifyCode();
+          vm.testPassword();
+        }
+      },
+      'username':{
+        deep:true,
+        handler(){
+          vm.testUsername();
         }
       }
     }

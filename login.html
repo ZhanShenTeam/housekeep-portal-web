@@ -53,9 +53,6 @@
       const password = $.cookie("password");
       if(username){
           loginVm.form.username=username;
-          if(password){
-              loginVm.form.password=password;
-          }
       }
   });
 
@@ -70,43 +67,40 @@
       },
       methods:{
           login(){
-              $.ajax({
-                  //请求方式
-                  type : "GET",
-                  //请求的媒体类型
-                  contentType: "application/json;charset=UTF-8",
-                  //请求地址
-                  url : "http://www.housekeep.com:8084/user/login",
-                  //数据，json字符串
-                  data : {
-                      "username":loginVm.form.username,
-                      "password":loginVm.form.password,
-                  },
-                  //请求成功
-                  success : function(result)
-                  {
-                      $.cookie("username",result.username);
-                      $.cookie("password",result.password);
-                      $.cookie("cusId",result.cusId);
-                      $.cookie("idType",result.idType);
-                      $.cookie("realName",result.realName);
-                      $.cookie("idNumber",result.idNumber);
-                      $.cookie("mobilePhone",result.mobilePhone);
-                      $.cookie("email",result.email);
-                      $.cookie("gender",result.gender);
-                      $.cookie("userPoint",result.userPoint);
-                      $.cookie("userLevel",result.userLevel);
-                      $.cookie("userMoney",result.userMoney);
-                      $.cookie("lastLoginTime",result.lastLoginTime);
-                      window.location.href="index.html";
-                  },
-                  //请求失败，包含具体的错误信息
-                  error : function(e){
-                      $("#errormsg").attr("style","color: #ce3c39;position: relative;display:block;top: -10px")
-                      console.log(e.status);
-                      console.log(e.responseText);
-                  }
-              });
+              if(loginVm.form.username && loginVm.form.password){
+                  $.ajax({
+                      //请求方式
+                      type : "GET",
+                      //请求的媒体类型
+                      contentType: "application/json;charset=UTF-8",
+                      //请求地址
+                      url : "http://127.0.0.1:8084/customer/login",
+                      crossDomain:true, //设置跨域为true
+                      /* xhrFields: {
+                           withCredentials: true //默认情况下，标准的跨域请求是不会发送cookie的
+                       },*/
+                      //数据，json字符串
+                      data : {
+                          "username":loginVm.form.username,
+                          "password":loginVm.form.password,
+                      },
+                      //请求成功
+                      success : function(result)
+                      {
+                          $.cookie("cusId",result)
+                          window.location.href="index.html";
+                      },
+                      //请求失败，包含具体的错误信息
+                      error : function(e){
+                          $("#errormsg").attr("style","color: #ce3c39;position: relative;display:block;top: -10px")
+                          console.log(e.status);
+                          console.log(e.responseText);
+                      }
+                  });
+              }else {
+                  $("#errormsg").attr("style","color: #ce3c39;position: relative;display:block;top: -10px")
+              }
+
           },
       }
   });

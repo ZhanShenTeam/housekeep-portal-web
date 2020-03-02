@@ -83,9 +83,8 @@
     <p class="weui-tabbar__label">分类</p>
   </a>
   <a href="shopcart.html" class="weui-tabbar__item">
-    <span class="weui-badge" style="position: absolute;top: -.4em;right: 1em;">8</span>
     <div class="weui-tabbar__icon foot-menu-cart"></div>
-    <p class="weui-tabbar__label">商城</p>
+    <p class="weui-tabbar__label">购物车</p>
   </a>
   <a href="mine.html" class="weui-tabbar__item">
     <div class="weui-tabbar__icon foot-menu-member"></div>
@@ -97,10 +96,7 @@
 <script src="lib/fastclick.js"></script>
 <script>
   $(function() {
-    $.cookie("username","hello");
     FastClick.attach(document.body);
-    indexVm.username=$.cookie("username");
-    $("#div1").html("欢迎您:"+indexVm.username);
   });
 </script>
 <script src="js/jquery-weui.js"></script>
