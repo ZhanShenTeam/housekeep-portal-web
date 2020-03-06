@@ -27,7 +27,7 @@
     <div class="weui-cell weui-cell_vcode">
       <div class="weui-cell__hd"><label class="weui-label wy-lab">手机号</label></div>
       <div class="weui-cell__bd"><input class="weui-input" type="tel" v-model="mobilePhone" placeholder="请输入手机号"></div>
-      <span style="display: none;color: #ce3c39;" id="Phonespan">请输入正确的手机号格式</span>
+      <span style="display: none;" id="Phonespan"></span>
       <div class="weui-cell__ft"><input class="weui-btn weui-btn_default" disabled="true" id="idCode"type="button"value="获取验证码" onclick="getCode(),time()"></div>
     </div>
     <div class="weui-cell">
@@ -49,7 +49,7 @@
     <input id="weuiAgree" type="checkbox" class="weui-agree__checkbox" checked="checked">
     <span class="weui-agree__text">阅读并同意<a href="javascript:void(0);">《注册协议》</a></span>
   </label>
-  <div class="weui-btn-area"><a href="javascript:;"  class="weui-btn weui-btn_warn"  onclick="registry()">注册</a></div>
+  <div class="weui-btn-area"><a href="javascript:;" class="weui-btn weui-btn_warn"  onclick="registry()">注册</a></div>
   <div class="weui-cells__tips t-c font-12">登陆账号为您输入的手机号码</div>
   <div class="weui-cells__tips t-c pd-10"><a href="xieyi.html" class="weui-cell_link font-12">查看注册协议</a></div>
   
@@ -84,9 +84,9 @@
       },1000);    //间隔为1s
     }
   }
+
   var id=0;
   //获取验证码
-
   function getCode(){
     id=parseInt((1+Math.random()*9)*1000000);
     $.ajax({
@@ -105,17 +105,11 @@
   }
   //后台注册
   function  registry(){
-
-
     if(!vm.testUsername()){return};
     if(!vm.testMobilePhone()){return};
     if(!vm.testRePassword()){return};
     if(!$("#weuiAgree").prop("checked")){return};
-
-
     if (!vm.testPassword()){return};
-
-
     var formData = new FormData();
     formData.append("username",vm.username);
     formData.append("password",vm.password);
@@ -125,18 +119,17 @@
       $.ajax({
         type: "post",
         url: "http://127.0.0.1:8084/customer/registry",
-        contentType: "application/x-www-form-urlencoded",
         data : formData,
         async:false,
         contentType: false,
         processData: false,
         dataType:'text',
         success: function (data) {
-          window.location.href="login.html";
+         alert("注册成功");
+         window.location.href="login.html"
         },
         error: function (e) {
-          const responseText = JSON.parse(e.responseText);
-
+         alert(JSON.parse(e.responseText).message);
           console.log(e.status);
           console.log(e.responseText);
         }
@@ -186,12 +179,30 @@
       testMobilePhone(){
         var regMobile=/^1\d{10}$/;
           if(!regMobile.test(vm.mobilePhone)){
+            $("#Phonespan").html("请输入正确的手机号格式")
             $("#Phonespan").attr("style","display: block;color: #ce3c39;")
             $("#idCode").attr("disabled","true")
             return false;
           }else{
-            $("#Phonespan").attr("style","display: none")
-            $("#idCode").removeAttr("disabled")
+            $.ajax({
+              type: "get",
+              url: "http://127.0.0.1:8084/customer/isReMobilePhone",
+              contentType: "application/json;charset=utf-8",
+              data : {"mobilePhone": this.mobilePhone},
+              success: function (data) {
+                $("#Phonespan").html("恭喜您,手机号可用")
+                $("#Phonespan").attr("style","display: block;color: #0BB20C;")
+                $("#idCode").removeAttr("disabled")
+              },
+              error: function (e) {
+                console.log(e.status);
+                console.log(e.responseText);
+                $("#Phonespan").html("手机号已经注册过")
+                $("#Phonespan").attr("style","display: block;color: #ce3c39;")
+                $("#idCode").attr("disabled","true")
+                return false;
+              }
+            })
             return true;
           }
 
