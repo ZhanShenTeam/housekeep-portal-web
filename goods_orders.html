@@ -39,11 +39,11 @@
                             <div class="weui-panel__hd">单号：<span v-html="o.goId"></span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span v-html="o.createTime"></span><span class="ord-status-txt-ts fr">交易成功</span></div>
                             <div class="weui-media-box__bd  pd-10">
                                 <div class="weui-media-box_appmsg ord-pro-list">
-                                    <div class="weui-media-box__hd"><a href="pro_info.html"><img class="weui-media-box__thumb" :src="o.goodsImage" alt=""></a></div>
+                                    <div class="weui-media-box__hd"><a href="pro_info.html"><img class="weui-media-box__thumb" :src="o.goods.goodsImageAddr" alt=""></a></div>
                                     <div class="weui-media-box__bd">
-                                        <h1 class="weui-media-box__desc"><a href="pro_info.html" class="ord-pro-link"><span v-html="o.goodsName"></span></a></h1>
+                                        <h1 class="weui-media-box__desc"><a href="pro_info.html" class="ord-pro-link"><span v-html="o.goods.goodsName"></span></a></h1>
                                         <div class="clear mg-t-10">
-                                            <div class="wy-pro-pri fl">¥<em class="num font-15" v-html="o.goodsPrice"></em></div>
+                                            <div class="wy-pro-pri fl">¥<em class="num font-15" v-html="o.goods.goodsPrice"></em></div>
                                             <div class="pro-amount fr"><span class="font-13">数量×<em class="name" v-html="o.goodsNumber"></em></span></div>
                                         </div>
                                     </div>
@@ -54,7 +54,7 @@
                             </div>
                             <div class="weui-panel__ft">
                                 <div class="weui-cell weui-cell_access weui-cell_link oder-opt-btnbox">
-                                    <a href="javascript:;" class="ords-btn-dele" @click="delete1(o.goId)">删除订单</a><a href="comment.html" class="ords-btn-com">去评价</a>
+                                    <a href="javascript:;" class="ords-btn-dele" @click="delete1(o.goId)">删除订单</a>
                                 </div>
                             </div>
                         </div>
@@ -66,11 +66,11 @@
                         <div class="weui-panel__hd">单号：<span v-html="o.goId"></span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span v-html="o.createTime"></span><span class="ord-status-txt-ts fr">待付款</span></div>
                         <div class="weui-media-box__bd  pd-10">
                             <div class="weui-media-box_appmsg ord-pro-list">
-                                <div class="weui-media-box__hd"><a href="pro_info.html"><img class="weui-media-box__thumb" :src="o.goodsImage" alt=""></a></div>
+                                <div class="weui-media-box__hd"><a href="pro_info.html"><img class="weui-media-box__thumb" :src="o.goods.goodsImageAddr" alt=""></a></div>
                                 <div class="weui-media-box__bd">
-                                    <h1 class="weui-media-box__desc"><a href="pro_info.html" class="ord-pro-link"><span v-html="o.goodsName"></span></a></h1>
+                                    <h1 class="weui-media-box__desc"><a href="pro_info.html" class="ord-pro-link"><span v-html="o.goods.goodsName"></span></a></h1>
                                     <div class="clear mg-t-10">
-                                        <div class="wy-pro-pri fl">¥<em class="num font-15" v-html="o.goodsPrice"></em></div>
+                                        <div class="wy-pro-pri fl">¥<em class="num font-15" v-html="o.goods.goodsPrice"></em></div>
                                         <div class="pro-amount fr"><span class="font-13">数量×<em class="name" v-html="o.goodsNumber"></em></span></div>
                                     </div>
                                 </div>
@@ -81,7 +81,7 @@
                         </div>
                         <div class="weui-panel__ft">
                             <div class="weui-cell weui-cell_access weui-cell_link oder-opt-btnbox">
-                                <a href="javascript:;" class="ords-btn-dele" @click="delete1(o.goId)">删除订单</a><a href="comment.html" class="ords-btn-com">去付款</a>
+                                <a href="javascript:;" class="ords-btn-dele" @click="delete1(o.goId)">删除订单</a><a href="goods_comment.html" class="ords-btn-com">去付款</a>
                             </div>
                         </div>
                     </div>
@@ -92,11 +92,11 @@
                         <div class="weui-panel__hd">单号：<span v-html="o.goId"></span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span v-html="o.createTime"></span><span class="ord-status-txt-ts fr">待发货</span></div>
                         <div class="weui-media-box__bd  pd-10">
                             <div class="weui-media-box_appmsg ord-pro-list">
-                                <div class="weui-media-box__hd"><a href="pro_info.html"><img class="weui-media-box__thumb" :src="o.goodsImage" alt=""></a></div>
+                                <div class="weui-media-box__hd"><a href="pro_info.html"><img class="weui-media-box__thumb" :src="o.goods.goodsImageAddr" alt=""></a></div>
                                 <div class="weui-media-box__bd">
-                                    <h1 class="weui-media-box__desc"><a href="pro_info.html" class="ord-pro-link"><span v-html="o.goodsName"></span></a></h1>
+                                    <h1 class="weui-media-box__desc"><a href="pro_info.html" class="ord-pro-link"><span v-html="o.goods.goodsName"></span></a></h1>
                                     <div class="clear mg-t-10">
-                                        <div class="wy-pro-pri fl">¥<em class="num font-15" v-html="o.goodsPrice"></em></div>
+                                        <div class="wy-pro-pri fl">¥<em class="num font-15" v-html="o.goods.goodsPrice"></em></div>
                                         <div class="pro-amount fr"><span class="font-13">数量×<em class="name" v-html="o.goodsNumber"></em></span></div>
                                     </div>
                                 </div>
@@ -118,11 +118,11 @@
                         <div class="weui-panel__hd">单号：<span v-html="o.goId"></span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span v-html="o.createTime"></span><span class="ord-status-txt-ts fr">待收货</span></div>
                         <div class="weui-media-box__bd  pd-10">
                             <div class="weui-media-box_appmsg ord-pro-list">
-                                <div class="weui-media-box__hd"><a href="pro_info.html"><img class="weui-media-box__thumb" :src="o.goodsImage" alt=""></a></div>
+                                <div class="weui-media-box__hd"><a href="pro_info.html"><img class="weui-media-box__thumb" :src="o.goods.goodsImageAddr" alt=""></a></div>
                                 <div class="weui-media-box__bd">
-                                    <h1 class="weui-media-box__desc"><a href="pro_info.html" class="ord-pro-link"><span v-html="o.goodsName"></span></a></h1>
+                                    <h1 class="weui-media-box__desc"><a href="pro_info.html" class="ord-pro-link"><span v-html="o.goods.goodsName"></span></a></h1>
                                     <div class="clear mg-t-10">
-                                        <div class="wy-pro-pri fl">¥<em class="num font-15" v-html="o.goodsPrice"></em></div>
+                                        <div class="wy-pro-pri fl">¥<em class="num font-15" v-html="o.goods.goodsPrice"></em></div>
                                         <div class="pro-amount fr"><span class="font-13">数量×<em class="name" v-html="o.goodsNumber"></em></span></div>
                                     </div>
                                 </div>
@@ -151,11 +151,11 @@
                         <div class="weui-panel__hd">单号：<span v-html="o.goId"></span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span v-html="o.createTime"></span><span class="ord-status-txt-ts fr">待评价</span></div>
                         <div class="weui-media-box__bd  pd-10">
                             <div class="weui-media-box_appmsg ord-pro-list">
-                                <div class="weui-media-box__hd"><a href="pro_info.html"><img class="weui-media-box__thumb" :src="o.goodsImage" alt=""></a></div>
+                                <div class="weui-media-box__hd"><a href="pro_info.html"><img class="weui-media-box__thumb" :src="o.goods.goodsImageAddr" alt=""></a></div>
                                 <div class="weui-media-box__bd">
-                                    <h1 class="weui-media-box__desc"><a href="pro_info.html" class="ord-pro-link"><span v-html="o.goodsName"></span></a></h1>
+                                    <h1 class="weui-media-box__desc"><a href="pro_info.html" class="ord-pro-link"><span v-html="o.goods.goodsName"></span></a></h1>
                                     <div class="clear mg-t-10">
-                                        <div class="wy-pro-pri fl">¥<em class="num font-15" v-html="o.goodsPrice"></em></div>
+                                        <div class="wy-pro-pri fl">¥<em class="num font-15" v-html="o.goods.goodsPrice"></em></div>
                                         <div class="pro-amount fr"><span class="font-13">数量×<em class="name" v-html="o.goodsNumber"></em></span></div>
                                     </div>
                                 </div>
@@ -166,7 +166,7 @@
                         </div>
                         <div class="weui-panel__ft">
                             <div class="weui-cell weui-cell_access weui-cell_link oder-opt-btnbox">
-                                <a :href="'comment.html?goId='+o.goId" class="ords-btn-com">去评价</a>
+                                <a :href="'goods_comment.html?goodsId='+o.goods.goodsId+'&goId='+o.goId" class="ords-btn-com">去评价</a>
                             </div>
                         </div>
                     </div>
@@ -199,7 +199,7 @@
                 $.ajax({
                     type:"GET",
                     contentType: "application/json;charset=UTF-8",
-                    url : "http://127.0.0.1:8083/test/goodsOrders",
+                    url : "http://127.0.0.1:8084/orders/getGoodsOrders",
                     dataType:"json",
                     data:{
                         "cusId":app.cusId
@@ -217,7 +217,7 @@
                 $.ajax({
                     type:"GET",
                     contentType: "application/json;charset=UTF-8",
-                    url : "http://127.0.0.1:8083/test/goodsOrder",
+                    url : "http://127.0.0.1:8084/orders/getGoodsOrders",
                     dataType:"json",
                     data:{
                         "goState":0,
@@ -236,7 +236,7 @@
                 $.ajax({
                     type:"GET",
                     contentType: "application/json;charset=UTF-8",
-                    url : "http://127.0.0.1:8083/test/goodsOrder",
+                    url : "http://127.0.0.1:8084/orders/getGoodsOrders",
                     dataType:"json",
                     data:{
                         "goState":1,
@@ -255,7 +255,7 @@
                 $.ajax({
                     type:"GET",
                     contentType: "application/json;charset=UTF-8",
-                    url : "http://127.0.0.1:8083/test/goodsOrder",
+                    url : "http://127.0.0.1:8084/orders/getGoodsOrders",
                     dataType:"json",
                     data:{
                         "goState":2,
@@ -274,7 +274,7 @@
                 $.ajax({
                     type:"GET",
                     contentType: "application/json;charset=UTF-8",
-                    url : "http://127.0.0.1:8083/test/goodsOrder",
+                    url : "http://127.0.0.1:8084/orders/getGoodsOrders",
                     dataType:"json",
                     data:{
                         "goState":3,
@@ -348,7 +348,7 @@
         $.confirm("您确定要删除此订单吗?", "确认删除?", function() {
             $.ajax({
                 type:"POST",
-                url : "http://127.0.0.1:8083/test/deleteGo",
+                url : "http://127.0.0.1:8084/orders/deleteGoodsOrder",
                 dataType:"json",
                 data:{
                     "goId":app.goId

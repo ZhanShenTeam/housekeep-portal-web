@@ -71,7 +71,7 @@
         app.address = (app.addressHeader+app.addressBody).replace(/,/g, "")
         $.ajax({
           type: "POST",
-          url: "http://127.0.0.1:8083/test/saveAddress",
+          url: "http://127.0.0.1:8084/address/saveAddress",
           data: {
             "cusId":app.cusId,
             "receiver":app.receiver,
@@ -88,7 +88,7 @@
         $.ajax({
           type: "GET",
           contentType: "application/json;charset=UTF-8",
-          url : "http://127.0.0.1:8083/test/addressInfo",
+          url : "http://127.0.0.1:8084/address/getAddressInfo",
           data : {
             "addressId":app.addressId
           },
@@ -108,7 +108,7 @@
       deleteAddress(){
         $.ajax({
           type: "POST",
-          url: "http://127.0.0.1:8083/test/deleteAddress",
+          url: "http://127.0.0.1:8084/address/deleteAddress",
           data: {
             "addressId":app.addressId
           },

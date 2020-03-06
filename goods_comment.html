@@ -16,15 +16,15 @@
 <div ontouchstart>
 <!--主体-->
 <header class="wy-header">
-  <div class="wy-header-icon-back"><span></span></div>
+  <a onclick="JavaScript:history.back(1);" href="#"><div class="wy-header-icon-back"><span></span></div></a>
   <div class="wy-header-title">发表评价</div>
 </header>
 <div class="weui-content clear">
   <div class="weui-cells weui-cells_form com-txt-area">
     <div class="weui-cell">
       <div class="weui-cell__bd">
-        <textarea class="weui-textarea txt-area" placeholder="这个商品满足你的期待吗？说说你的使用心得，分享给想买的他们吧" rows="3" v-model="commentContent"></textarea>
-        <div class="weui-textarea-counter font-12 num"><span>0</span>/200</div>
+        <textarea class="weui-textarea txt-area" placeholder="说说你的体验心得,一起分享吧!" rows="3" v-model="gcContent"></textarea>
+        <div class="weui-textarea-counter font-12 num"><span v-html="count"></span>/50</div>
       </div>
     </div>
   </div>
@@ -43,31 +43,21 @@
           <div class="weui-uploader">
             <div class="weui-uploader__hd">
               <p class="weui-uploader__title font-14">图片上传</p>
-              <div class="weui-uploader__info font-12">0/2</div>
+                <div class="weui-uploader__info font-12"><span v-html="imageCount"></span>/3</div>
             </div>
             <div class="weui-uploader__bd">
               <ul class="weui-uploader__files" id="uploaderFiles">
-                <li class="weui-uploader__file" style="background-image:url(./images/pic_160.png)"></li>
-                <li class="weui-uploader__file" style="background-image:url(./images/pic_160.png)"></li>
-                <li class="weui-uploader__file" style="background-image:url(./images/pic_160.png)"></li>
-                <li class="weui-uploader__file weui-uploader__file_status" style="background-image:url(./images/pic_160.png)">
-                  <div class="weui-uploader__file-content">
-                    <i class="weui-icon-warn"></i>
-                  </div>
-                </li>
-                <li class="weui-uploader__file weui-uploader__file_status" style="background-image:url(./images/pic_160.png)">
-                  <div class="weui-uploader__file-content">50%</div>
-                </li>
+
               </ul>
-              <div class="weui-uploader__input-box">
-                <input id="uploaderInput" class="weui-uploader__input" type="file" accept="image/*" multiple="">
+              <div class="weui-uploader__input-box" id="hideUpload">
+                <input id="upload" class="weui-uploader__input" type="file" accept="image/*" multiple="">
               </div>
             </div>
           </div>
         </div>
       </div>
   </div>
-  <div class="com-button"><a href="javascript:void(0);">发表评价</a></div>
+  <div class="com-button"><a href="javascript:void(0);" @click="submit">发表评价</a></div>
 </div>
 </div>
 </div>
@@ -80,22 +70,96 @@
   let app = new Vue({
     el:"#app",
     data:{
-      username:"",
-      goId:"",
-      commentContent:"",
-      isHide:true,
+        count:0,
+        imageCount:0,
+        cusId:"",
+        goodsId:"",
+        gcContent:"",
+        isHide:true,
+        image:[],
+        goId:""
     },
+      watch:{
+        gcContent:{
+          handler(newVal,oldVal){
+            if(newVal>oldVal){
+              if(newVal.length > 50){
+                app.gcContent = oldVal
+              }
+              app.count += (newVal.length - oldVal.length)
+            }else {
+              app.count -= (oldVal.length - newVal.length)
+            }
+
+          },
+          deep:true
+        },
+          imageCount:{
+            handler(newVal,oldVal){
+              if(newVal == 3 ){
+                $("#hideUpload").attr("style","display:none")
+                /*  style="display: none"*/
+              }
+            },
+            deep:true
+          }
+      },
     methods:{
       check(){
         app.isHide = !app.isHide
+      },
+      submit(){
+        $.ajax({
+          type:"POST",
+          url : "http://127.0.0.1:8084/comments/addGoodsComments",
+          data:{
+              "cusId":app.cusId,
+              "goodsId":app.goodsId,
+              "gcContent":app.gcContent,
+              "isHide":app.isHide,
+              "image":app.image,
+              "goId":app.goId
+          },
+          success: function(data){
+              window.location.href = "goods_orders.html?tabCode=waitComment"
+          },
+          error: function() {
+            alert("出错了！")
+          }
+        })
       }
     },
     created:function () {
-      this.goId = window.location.href.split("?")[1].split("=")[1]
+      this.goodsId = window.location.href.split("?")[1].split("&")[0].split("=")[1]
+      this.goId = window.location.href.split("?")[1].split("&")[1].split("=")[1]
       $(function () {
-       app.username = $.cookie("username")
+       app.cusId = $.cookie("cusId")
       })
     }
+  })
+</script>
+
+<script>
+  $("#upload").on("change",function () {
+    var formData = new FormData()
+    formData.append("file",$("#upload")[0].files[0])
+    $.ajax({
+      type:"post",
+      url:"http://127.0.0.1:8082/upload/image",
+      contentType : false,    //不设置Content-Type请求头
+      processData : false,    // 不处理发送的数据
+      data:formData,
+      dataType:"text",
+      success:function(data){
+          app.imageCount++
+          app.image.push(data)
+        var html = "<li class='weui-uploader__file weui-uploader__file_status'><img  style='width: 80px;height: 80px' id='image' src='"+data+"' alt=''/></li>"
+        $("#uploaderFiles").append(html)
+      },
+      error:function(){
+        alert("出错了");
+      }
+    });
   })
 </script>
 

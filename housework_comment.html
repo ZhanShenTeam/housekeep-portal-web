@@ -1,0 +1,204 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <title>发表评价</title>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+    <meta name="description" content="Write an awesome description for your new site here. You can edit this line in _config.yml. It will appear in your document head meta (for Google search results) and in your feed.xml site description.">
+    <link rel="stylesheet" href="lib/weui.min.css">
+    <link rel="stylesheet" href="css/jquery-weui.css">
+    <link rel="stylesheet" href="css/style.css">
+    <script src="js/jquery-2.1.4.js"></script>
+    <script src="js/jquery.cookie.js"></script>
+</head>
+<div id="app">
+    <div ontouchstart>
+        <!--主体-->
+        <header class="wy-header">
+            <a onclick="JavaScript:history.back(1);" href="#"><div class="wy-header-icon-back"><span></span></div></a>
+            <div class="wy-header-title">发表评价</div>
+        </header>
+        <div class="weui-content clear">
+            <div class="weui-cells weui-cells_form com-txt-area">
+                <div class="weui-cell">
+                    <div class="weui-cell__bd">
+                        <textarea class="weui-textarea txt-area" placeholder="说说你的体验心得,一起分享吧!" rows="3" v-model="hcContent"></textarea>
+                        <div class="weui-textarea-counter font-12 num"><span v-html="count"></span>/50</div>
+                    </div>
+                </div>
+            </div>
+            <div class="weui-cells weui-cells_checkbox commg">
+                <label class="weui-cell weui-check__label" for="s11">
+                    <div class="weui-cell__hd">
+                        <input type="checkbox" class="weui-check" name="checkbox1" id="s11" checked="checked" @click="check">
+                        <i class="weui-icon-checked"></i>
+                    </div>
+                    <div class="weui-cell__bd"><p>匿名评价</p></div>
+                </label>
+            </div>
+            <div class="weui-cells weui-cells_form">
+                <div class="weui-cell">
+                    <div class="weui-cell__bd">
+                        <div class="weui-uploader">
+                            <div class="weui-uploader__hd">
+                                <p class="weui-uploader__title font-14">图片上传</p>
+                                <div class="weui-uploader__info font-12"><span v-html="imageCount"></span>/3</div>
+                            </div>
+                            <div class="weui-uploader__bd">
+                                <ul class="weui-uploader__files" id="uploaderFiles">
+
+                                </ul>
+                                <div class="weui-uploader__input-box" id="hideUpload">
+                                    <input id="upload" class="weui-uploader__input" type="file" accept="image/*" multiple="">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="com-button"><a href="javascript:void(0);" @click="submit">发表评价</a></div>
+        </div>
+    </div>
+</div>
+<!--<script src="lib/jquery-2.1.4.js"></script> -->
+<script src="lib/fastclick.js"></script>
+<script type="text/javascript" src="js/jquery.Spinner.js"></script>
+<script src="node_modules/vue/dist/vue.js"></script>
+
+<script>
+    let app = new Vue({
+        el:"#app",
+        data:{
+            count:0,
+            imageCount:0,
+            cusId:"",
+            catId:"",
+            hcContent:"",
+            isHide:true,
+            image:[],
+            hoId:""
+        },
+        watch:{
+            /*hcContent(){
+                app.count1++
+            },*/
+            hcContent:{
+                handler(newVal,oldVal){
+                    if(newVal>oldVal){
+                        if(newVal.length > 50){
+                            app.hcContent = oldVal
+                        }
+                        app.count += (newVal.length - oldVal.length)
+                    }else {
+                        app.count -= (oldVal.length - newVal.length)
+                    }
+
+                },
+                deep:true
+            },
+            imageCount: {
+                handler(newVal,oldVal){
+                    if(newVal == 3 ){
+                        $("#hideUpload").attr("style","display:none")
+                      /*  style="display: none"*/
+                    }
+                },
+                deep:true
+            }
+        },
+        methods:{
+            check(){
+                app.isHide = !app.isHide
+            },
+            submit(){
+                $.ajax({
+                    type:"POST",
+                    url : "http://127.0.0.1:8084/comments/addHkComments",
+                    data:{
+                        "cusId":app.cusId,
+                        "catId":app.catId,
+                        "hcContent":app.hcContent,
+                        "isHide":app.isHide,
+                        "image":app.image,
+                        "hoId":app.hoId
+                    },
+                    success: function(data){
+                        window.location.href = "housework_order.html?tabCode=waitComment"
+                    },
+                    error: function() {
+                        alert("出错了！")
+                    }
+                })
+            }
+        },
+        created:function () {
+            this.catId = window.location.href.split("?")[1].split("&")[0].split("=")[1]
+            this.hoId = window.location.href.split("?")[1].split("&")[1].split("=")[1]
+            $(function () {
+                app.cusId = $.cookie("cusId")
+            })
+        }
+    })
+</script>
+
+<script>
+    $("#upload").on("change",function () {
+        var formData = new FormData()
+        formData.append("file",$("#upload")[0].files[0])
+        $.ajax({
+            type:"post",
+            url:"http://127.0.0.1:8082/upload/image",
+            contentType : false,    //不设置Content-Type请求头
+            processData : false,    // 不处理发送的数据
+            data:formData,
+            dataType:"text",
+            success:function(data){
+                app.imageCount++
+                app.image.push(data)
+                var html = "<li class='weui-uploader__file weui-uploader__file_status'><img  style='width: 80px;height: 80px' id='image' src='"+data+"' alt=''/></li>"
+                $("#uploaderFiles").append(html)
+            },
+            error:function(){
+                alert("出错了");
+            }
+        });
+    })
+</script>
+
+<script>
+    $(function() {
+        FastClick.attach(document.body);
+    });
+</script>
+<script src="js/jquery-weui.js"></script>
+<script type="text/javascript">
+    $(".order-list-Below ul li").click(
+        function(){
+            var num = $(this).index()+1;
+            var len = $(this).index();
+            var thats = $(this).parent(".order-list-Below ul").find("li");
+            if($(thats).eq(len).attr("class")=="on"){
+                if($(thats).eq(num).attr("class")=="on"){
+                    $(thats).removeClass();
+                    for (var i=0 ; i<num; i++) {
+                        $(thats).eq(i).addClass("on");
+                    }
+                }else{
+                    $(thats).removeClass();
+                    for (var k=0 ; k<len; k++) {
+                        $(thats).eq(k).addClass("on");
+                    }
+                }
+            }else{
+                $(thats).removeClass();
+                for (var j=0 ; j<num; j++) {
+                    $(thats).eq(j).addClass("on");
+                }
+            }
+        }
+    );
+</script>
+
+</body>
+</html>

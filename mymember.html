@@ -113,13 +113,25 @@
         $.ajax({
           type : "GET",
           contentType: "application/json;charset=UTF-8",
-          url : "http://127.0.0.1:8083/test/customer",
+          url : "http://127.0.0.1:8084/customer/getCusInfo",
           data : {
             "cusId":this.cusId
           },
           dataType:"json",
           success: function(data){
-            app.cusLevel = data.cusLevel
+            if(data.cusLevel == 0) {
+              app.cusLevel = "普通"
+            }if(data.cusLevel == 1){
+              app.cusLevel = "青铜VIP"
+            }if(data.cusLevel == 2){
+              app.cusLevel = "黄金VIP"
+            }if(data.cusLevel == 3){
+              app.cusLevel = "铂金VIP"
+            }if(data.cusLevel == 4){
+              app.cusLevel = "钻石VIP"
+            }if(data.cusLevel == 5){
+              app.cusLevel = "至尊VIP"
+            }
             app.cusMoney = data.cusMoney
           },
           error: function() {

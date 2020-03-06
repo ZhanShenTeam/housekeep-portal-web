@@ -25,7 +25,7 @@
     <div class="weui-panel__bd">
       <div class="weui-media-box weui-media-box_text address-list-box">
         <a :href="'address_edit.html?addressId='+a.addressId" class="address-edit"></a>
-        <h4 class="weui-media-box__title"><span v-html="a.receiver"></span><span v-html="a.phone"></span></h4>
+        <h4 class="weui-media-box__title"><span v-html="a.receiver"></span>&nbsp;<span v-html="a.phone"></span></h4>
         <p class="weui-media-box__desc address-txt" v-html="a.address"></p>
       </div>
     </div>
@@ -57,7 +57,7 @@
         $.ajax({
           type : "GET",
           contentType: "application/json;charset=UTF-8",
-          url : "http://127.0.0.1:8083/test/address",
+          url : "http://127.0.0.1:8084/address/getAllAddress",
           data : {
             "cusId":app.cusId
           },

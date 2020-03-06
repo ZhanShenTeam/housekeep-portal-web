@@ -34,7 +34,7 @@
   <div class="weui-panel weui-panel_access">
     <div class="weui-panel__hd">
       <a href="housework_order.html?tabCode=all" class="weui-cell weui-cell_access center-alloder">
-        <div class="weui-cell__bd wy-cell">
+          <div class="weui-cell__bd wy-cell">
           <div class="weui-cell__hd"><img src="images/center-icon-order-all.png" alt="" class="center-list-icon"></div>
           <div class="weui-cell__bd weui-cell_primary"><p class="center-list-txt">服务订单</p></div>
         </div>
@@ -199,14 +199,27 @@
               //请求的媒体类型
               contentType: "application/json;charset=UTF-8",
               //请求地址
-              url : "http://127.0.0.1:8083/test/customer",
+              url : "http://127.0.0.1:8084/customer/getCusInfo",
               //数据，json字符串
               data : {
                   "cusId":this.cusId
               },
               dataType:"json",
               success: function(data){
-                  app.cusLevel = data.cusLevel
+                if(data.cusLevel == 0) {
+                  app.cusLevel = "普通用户"
+                }if(data.cusLevel == 1){
+                  app.cusLevel = "青铜VIP"
+                }if(data.cusLevel == 2){
+                  app.cusLevel = "黄金VIP"
+                }if(data.cusLevel == 3){
+                  app.cusLevel = "铂金VIP"
+                }if(data.cusLevel == 4){
+                  app.cusLevel = "钻石VIP"
+                }if(data.cusLevel == 5){
+                  app.cusLevel = "至尊VIP"
+                }
+                  app.username = data.username
                   app.cusMoney = data.cusMoney
               },
               error: function() {
@@ -214,8 +227,8 @@
           })
       },
       exitLogin(){
-        $.cookie("cusId", "", {expires: -1,path:"/"});
-        $.cookie("username", "", {expires: -1,path:"/"});
+        $.cookie("cusId", "",{ expires: -1 });
+       /* $.cookie("username", "", {expires: -1,path:"/"});*/
       }
     },
     created:function() {
@@ -224,7 +237,7 @@
         if($.cookie("cusId")==null){
           window.location.href="login.html"
         }
-        app.username = $.cookie("username")
+        /*app.username = $.cookie("username")*/
         app.cusId = $.cookie("cusId")
       })
         //查用户等级和余额
