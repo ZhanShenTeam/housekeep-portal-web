@@ -114,12 +114,12 @@
       //请求的媒体类型
       contentType: "application/json;charset=UTF-8",
       //请求地址
-      url : "http://www.housekeep.com:8084/goods/queryGoodsByPage",
+      url : "http://127.0.0.1:8083/search/queryItemsByPage",
       //数据，json字符串
       data : {
         "key":vm.key,
         "status":1,
-        "page":1,
+        "page":0,
         "rows":10,
         "sortByPrice":vm.sortByPrice,
       },
@@ -149,7 +149,7 @@
       //请求的媒体类型
       contentType: "application/json;charset=UTF-8",
       //请求地址
-      url : "http://www.housekeep.com:8084/goods/queryGoodsByPage",
+      url : "http://127.0.0.1:8083/search/queryItemsByPage",
       //数据，json字符串
       data : {
         "key":vm.key,
