@@ -20,6 +20,7 @@
   <!--产品详情-->
   <div class="weui-tab">
     <div class="weui-navbar" style="position:fixed; top:0; left:0; right:0; height:44px;">
+     <a class="weui-navbar__item proinfo-tab-tit"style="width: 10px":href="href"><div class="wy-header-icon-back"><span></span></div></a>
       <a class="weui-navbar__item proinfo-tab-tit weui-bar__item--on" href="#tab1">商品</a>
       <a class="weui-navbar__item proinfo-tab-tit" href="#tab2">详情</a>
       <a class="weui-navbar__item proinfo-tab-tit" href="#tab3">评价</a>
@@ -36,9 +37,9 @@
           <div class="swiper-pagination swiper-zhutu-pagination"></div>
         </div>
         <div class="wy-media-box-nomg weui-media-box_text">
-          <h4 class="wy-media-box__title" >{{goods.goodsName}}</h4>
-          <div class="wy-pro-pri mg-tb-5">¥<em class="num font-20">{{formatPrice(goods.goodsPrice)}}</em></div>
-          <p class="weui-media-box__desc">【2017春季全场2件8】春款薄绒休闲套头纯色印花连帽大码卫衣套装新款上新！！</p>
+          <h4 class="wy-media-box__title" v-text="goods.goodsName"></h4>
+          <div class="wy-pro-pri mg-tb-5">¥<em class="num font-20" v-text="formatPrice(goods.goodsPrice)"></em></div>
+          <p class="weui-media-box__desc" v-text="goods.goodsDescription"></p>
         </div>
         <div class="wy-media-box2 weui-media-box_text">
 
@@ -84,9 +85,8 @@
             <div class="weui-media-box__hd proinfo-txt-l"><span class="promotion-label-tit">送至</span></div>
             <div class="weui-media-box__bd">
               <div class="promotion-message clear">
-                <span class="promotion-item-text">江苏</span>
-                <span class="promotion-item-text">宿迁</span>
-                <span class="promotion-item-text">洋河新区</span>
+                <span class="promotion-item-text" v-text="address"></span>
+
               </div>
             </div>
           </div>
@@ -102,7 +102,7 @@
             <div class="weui-media-box__hd proinfo-txt-l"><span class="promotion-label-tit">商家</span></div>
             <div class="weui-media-box__bd">
               <div class="promotion-message clear">
-                <span class="promotion-item-text">蓝之蓝股份有限公司</span>
+                <span class="promotion-item-text">自营</span>
               </div>
             </div>
           </div>
@@ -311,8 +311,10 @@
 <script>
 
   $(function() {
-    FastClick.attach(document.body);
-    infoVm.goodsId=getUrlParam("goodsId");
+    vm.goodsId=getUrlParam("goodsId");
+    let key = getUrlParam("key");
+    vm.href += "key="+key+"&";
+    console.log(vm.href)
     load();
 
   });
@@ -325,7 +327,7 @@
     }else{
       const json={
         "cusId":cusId,
-        "goodsId":infoVm.goodsId,
+        "goodsId":vm.goodsId,
         "number":"1",
 
       }
@@ -349,6 +351,10 @@
   }
 
   function  load() {
+    loadGoods();
+    loadAddress();
+  }
+  function loadGoods() {
     $.ajax({
       //请求方式
       type : "GET",
@@ -358,42 +364,73 @@
       url : "http://www.housekeep.com:8084/goods/queryGoodsDetailsById",
       //数据，json字符串
       data : {
-        "goodsId":infoVm.goodsId,
+        "goodsId":vm.goodsId,
       },
       //请求成功
       success : function(result)
       {
-        infoVm.goods.goodsName=result.goodsName;
-        infoVm.goods.goodsNumber=result.goodsNumber;
-        infoVm.goods.goodsCategory=result.goodsCategory;
-        infoVm.goods.goodsPrice=result. goodsPrice;
-        infoVm.goods.goodsImageAddr=result.goodsImageAddr;
-        infoVm.goods.goodsDescription=result.goodsDescription;
-        infoVm.goodsDetails.description=result.goodsDetails.description;
-        infoVm.goodsDetails.spec=JSON.parse(result.goodsDetails.spec);
-        $(".neicun").text(infoVm.goodsDetails.spec[12])
-        $(".yingpan").text(infoVm.goodsDetails.spec[13])
-        $("#tab2").html(infoVm.goodsDetails.description);
+        vm.goods.goodsName=result.goodsName;
+        vm.goods.goodsNumber=result.goodsNumber;
+        vm.goods.goodsCategory=result.goodsCategory;
+        vm.goods.goodsPrice=result. goodsPrice;
+        vm.goods.goodsImageAddr=result.goodsImageAddr;
+        vm.goods.goodsDescription=result.goodsDescription;
+        vm.goodsDetails.description=result.goodsDetails.description;
+        vm.goodsDetails.spec=JSON.parse(result.goodsDetails.spec);
+        $(".neicun").text(vm.goodsDetails.spec[12])
+        $(".yingpan").text(vm.goodsDetails.spec[13])
+        $("#tab2").html(vm.goodsDetails.description);
 
       },
       //请求失败，包含具体的错误信息
       error : function(e){
         console.log(e.status);
         console.log(e.responseText);
-       // window.location.href="error.html";
+        // window.location.href="error.html";
       }
     })
-   // $("#neicun").html(infoVm.goodsDetails.spec.);
+  }
 
+  function loadAddress() {
+    let cusId = $.cookie("cusId");
+    if(!cusId){
+    return;
+    }
+    $.ajax({
+//请求方式
+      type: "GET",
+//请求的媒体类型
+      contentType: "application/json;charset=UTF-8",
+//请求地址
+      url: "http://127.0.0.1:8084/address/queryOneAddress",
+//数据，json字符串
+      data: {
+        "cusId":cusId,
+      },
+//请求成功
+      success: function (result) {
+        console.log(result.address)
+        vm.address=result.address;
+      },
+//请求失败，包含具体的错误信息
+      error: function (e) {
+        console.log(e.status);
+        console.log(e.responseText);
+        vm.address="您的地址为空,请添加您的地址";
+        //window.location.href="address_list.html";
+      }
+    })
   }
 </script> 
 <script src="js/jquery-weui.js"></script>
 <script src="js/swiper.js"></script>
 <script>
-  var infoVm = new Vue({
+  var vm = new Vue({
     el:"#info",
     data:{
       goodsId:"",
+      address:"",
+      href:"pro_list.html?",
       goods:{
         goodsId: "",
         goodsName: "",

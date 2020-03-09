@@ -14,6 +14,8 @@
   <script src="./js/vue/vue.js"></script>
   <script src="js/jquery.cookie.js"></script>
   <script src="js/jquery-weui.js"></script>
+  <script src="js/Marcel.js"></script>
+
 </head>
 <body ontouchstart>
 <!--顶部搜索-->
@@ -37,11 +39,11 @@
 
   <div id="list" class='demos-content-padded proListWrap'  v-for="(result,index) in results" :key="index">
     <div class="pro-items">
-      <a :href ="'pro_info.html?goodsId='+result.goodsId" class="weui-media-box weui-media-box_appmsg">
+      <a :href ="href+'goodsId='+result.goodsId+'&'" class="weui-media-box weui-media-box_appmsg">
         <div class="weui-media-box__hd"><img class="weui-media-box__thumb" :src="result.goodsImageAddr" alt=""></div>
         <div class="weui-media-box__bd">
-          <h1 class="weui-media-box__desc">{{result.goodsName}}</h1>
-          <div class="wy-pro-pri">¥<em class="num font-15">{{formatPrice(result.goodsPrice)}}/</em></div>
+          <h1 class="weui-media-box__desc" v-text="result.goodsName"></h1>
+          <div class="wy-pro-pri">¥<em class="num font-15" v-text="formatPrice(result.goodsPrice)">/</em></div>
           <ul class="weui-media-box__info prolist-ul">
             <li class="weui-media-box__info__meta"><em class="num">0</em>条评价</li>
             <li class="weui-media-box__info__meta"><em class="num">100%</em>好评</li>
@@ -63,7 +65,8 @@
 
   $(function() {
     FastClick.attach(document.body);
-    vm.key=$.cookie("key");
+    vm.key=getUrlParam("key");
+    vm.href+="key="+vm.key+"&";
     load();
   });
   function zonghe(){
@@ -115,6 +118,7 @@
       contentType: "application/json;charset=UTF-8",
       //请求地址
       url : "http://127.0.0.1:8083/search/queryItemsByPage",
+      async:false,
       //数据，json字符串
       data : {
         "key":vm.key,
@@ -127,7 +131,6 @@
       success : function(result)
       {
         const items = JSON.stringify(result.items)
-
         vm.results=JSON.parse(items);
         vm.totalPage=JSON.stringify(result.totalPage)
 
@@ -137,7 +140,7 @@
       error : function(e){
         console.log(e.status);
         console.log(e.responseText);
-        window.location.href="error.html";
+        windows.location.href="error2.html"
       }
     })
   }
@@ -148,7 +151,8 @@
       type : "GET",
       //请求的媒体类型
       contentType: "application/json;charset=UTF-8",
-      //请求地址
+      //请求地址,
+     async:false,
       url : "http://127.0.0.1:8083/search/queryItemsByPage",
       //数据，json字符串
       data : {
@@ -168,7 +172,7 @@
       error : function(e){
         console.log(e.status);
         console.log(e.responseText);
-        window.location.href="error.html";
+        //window.location.href="error.html";
       }
     })
   }
@@ -180,6 +184,7 @@
     data: {
       key:"",
       results:[],
+      href:"pro_info.html?",
       sortByPrice:"",
       loading:"false",
       query:{

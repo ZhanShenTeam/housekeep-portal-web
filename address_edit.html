@@ -12,12 +12,14 @@
 <link rel="stylesheet" href="css/style.css">
   <script src="js/jquery-2.1.4.js"></script>
   <script src="js/jquery.cookie.js"></script>
+  <script src="js/Marcel.js"></script>
+
 </head>
 <body ontouchstart>
 <div id="app">
 <!--主体-->
 <header class="wy-header">
-  <a href="address_list.html"><div class="wy-header-icon-back"><span></span></div></a>
+  <a :href="href"><div class="wy-header-icon-back"><span></span></div></a>
   <div class="wy-header-title">编辑地址</div>
 </header>
 <div class="weui-content">
@@ -43,10 +45,9 @@
 
   </div> 
   <div class="weui-btn-area">
-    <a class="weui-btn weui-btn_primary" href="address_list.html" id="showTooltips" @click="addAddress">保存此地址</a>
-    <a href="address_list.html" class="weui-btn weui-btn_warn" @click="deleteAddress">删除此地址</a>
+    <a class="weui-btn weui-btn_primary"  id="showTooltips" @click="addAddress">保存此地址</a>
+    <a :href="href" id="delete"  class="weui-btn weui-btn_warn" @click="deleteAddress">删除此地址</a>
   </div>
-
 </div>
 </div>
 
@@ -64,10 +65,15 @@
       addressHeader:"",
       addressBody:"",
       phone:"",
-      address:""
+      address:"",
+      href:"address_list.html?"
     },
     methods:{
       addAddress(){
+        if(!app.testReceiver()){return};
+        if(!app.testAddressHeader()){return};
+        if(!app.testAddressBody()){return};
+        if(!app.testPhone()){return};
         app.address = (app.addressHeader+app.addressBody).replace(/,/g, "")
         $.ajax({
           type: "POST",
@@ -83,8 +89,12 @@
           success: function(result) {
           }
         });
+        window.location.href=app.href;
       },
       getAddressInfo(){
+        if(!app.addressId){
+          return;
+        }
         $.ajax({
           type: "GET",
           contentType: "application/json;charset=UTF-8",
@@ -100,12 +110,16 @@
             app.addressHeader = data.address.match(reg)
             app.addressBody = data.address.substring(app.addressHeader.toString().replace(/,/g, "").length)
           },
-          error: function() {
-            alert("出错了！")
+          error: function(e) {
+           console.log(e.status);
+           console.log(e.responseText);
           }
         })
       },
       deleteAddress(){
+        if(!app.addressId){
+          return;
+        }
         $.ajax({
           type: "POST",
           url: "http://127.0.0.1:8084/address/deleteAddress",
@@ -116,21 +130,79 @@
           success: function(result) {
           }
         });
-      }
+      },
+      testReceiver(){
+        if (!this.receiver){
+          return false;
+        }
+        return true;
+      },
+      testAddressHeader(){
+        if (!this.addressHeader){
+          return false;
+        }
+        return true;
+      },
+      testAddressBody(){
+        if (!this.addressBody){
+          return false;
+        }
+        return true;
+      },
+      testPhone(){
+        if (!this.phone){
+          return false;
+        }
+        return true;
+      },
     },
     created:function () {
       $(function () {
-        app.cusId = $.cookie("cusId")
-        app.addressId=window.location.href.split("?")[1].split("=")[1];
+        app.cusId = $.cookie("cusId");
+        app.addressId=getUrlParam("addressId");
+        if (!app.addressId){
+          $("#delete").attr("style","display: none")
+        }
+        //当从购物车页面进入时,保存路径地址和购物车项
+        let path=getUrlParam("path");
+        let array=getUrlParam("array");
+        if (path){
+          app.href+="path="+path+"&";
+          app.href+="array="+array+"&";
+          app.href+="addressId="+app.addressId+"&"
+        }
         app.getAddressInfo()
-
       })
-    }
+    },
+    watch:{
+      'receiver':{
+        handler(){
+          app.testReceiver();
+        }
+      },
+      'addressHeader':{
+        handler(){
+          app.testAddressHeader();
+        }
+      },
+      'addressBody':{
+        handler(){
+          app.testAddressBody();
+        }
+      },
+      'phone':{
+        handler(){
+          app.testAddressBody();
+        }
+      },
+    },
   })
 </script>
 <script>
   $(function() {
     FastClick.attach(document.body);
+
+
   });
 </script>
 

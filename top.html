@@ -1,7 +1,7 @@
 <script src="./js/vue/vue.js"></script>
 <div id="searchBar">
     <div class="weui-search-bar" >
-    <form class="weui-search-bar__form" action="pro_list.html" onsubmit=" return searchVm.submit()">
+    <form class="weui-search-bar__form"  action ="javascript:submit()">
         <div class="weui-search-bar__box">
             <i class="weui-icon-search"></i>
             <input type="search" class="weui-search-bar__input" autocomplete="off" onblur="searchVm. clearOntime()" v-model="key" id="searchInput" placeholder="搜索" required/>
@@ -17,13 +17,18 @@
     <div class="weui-cells searchbar-result" id="searchResult">
         <div class="weui-cell weui-cell_active weui-cell_access" v-for="(result,index) in results" :key="index">
              <div class="weui-cell__bd weui-cell_primary">
-                 <a :href ="'pro_info.html?goodsId='+result.goodsId">{{result.goodsName}}</a>
+                 <a :href ="'pro_info.html?goodsId='+result.goodsId" v-text="result.goodsName"></a>
             </div>
          </div>
     </div>
 </div>
 
-
+<script>
+    function submit() {
+        console.log(111)
+        window.location.href="pro_list.html?key="+searchVm.key;
+    }
+</script>
 <script>
     var searchVm = new Vue({
         el:"#searchBar",
@@ -38,9 +43,6 @@
 
             },
             clear(){ searchVm.results=[];},
-            submit(){
-                $.cookie("key",searchVm.key);
-            },
             search(){
                 if(searchVm.key){
                 $.ajax({
@@ -48,17 +50,19 @@
                         type : "GET",
                         //请求的媒体类型
                         contentType: "application/json;charset=UTF-8",
-                        //请求地址
-                        url : "http://www.housekeep.com:8084/goods/search",
-                        //数据，json字符串
-                        data : {
-                            "key":searchVm.key,
-                        },
+                    url : "http://127.0.0.1:8083/search/queryItemsByPage",
+                    async:false,
+                    //数据，json字符串
+                    data : {
+                        "key":searchVm.key,
+                        "status":1,
+                        "page":0,
+                        "rows":5,
+                    },
                         //请求成功
                         success : function(result)
                         {
-                            const json = JSON.stringify(result)
-                            searchVm.results=JSON.parse(json);
+                            searchVm.results=result.items;
 
                         },
                         //请求失败，包含具体的错误信息
@@ -76,7 +80,7 @@
     watch:{
             'key':{
                 handler(){
-                    //searchVm.search();
+                    searchVm.search();
                 }
 
             }

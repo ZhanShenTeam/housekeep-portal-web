@@ -12,26 +12,27 @@
 <link rel="stylesheet" href="css/style.css">
   <script src="js/jquery-2.1.4.js"></script>
   <script src="js/jquery.cookie.js"></script>
+  <script src="js/Marcel.js"></script>
 </head>
 <body ontouchstart>
 <div id="app">
 <!--主体-->
 <header class="wy-header">
-  <a href="mine.html"><div class="wy-header-icon-back"><span></span></div></a>
+  <a :href="href"><div class="wy-header-icon-back"><span></span></div></a>
   <div class="wy-header-title">地址管理</div>
 </header>
 <div class="weui-content">
   <div class="weui-panel address-box" v-for="a in addressList">
-    <div class="weui-panel__bd">
+    <div class="weui-panel__bd" @click="jumpOrder(a.addressId)">
       <div class="weui-media-box weui-media-box_text address-list-box">
-        <a :href="'address_edit.html?addressId='+a.addressId" class="address-edit"></a>
+        <a onclick="event.cancelBubble = true" @click="jump(a.addressId)" class="address-edit"></a>
         <h4 class="weui-media-box__title"><span v-html="a.receiver"></span>&nbsp;<span v-html="a.phone"></span></h4>
         <p class="weui-media-box__desc address-txt" v-html="a.address"></p>
       </div>
     </div>
   </div>
   <div class="weui-btn-area">
-    <a class="weui-btn weui-btn_primary" href="address_edit.html" id="showTooltips">添加收货地址</a>
+    <a class="weui-btn weui-btn_primary" :href="href2" id="showTooltips">添加收货地址</a>
   </div>
 </div>
 </div>
@@ -39,19 +40,59 @@
 <!--<script src="lib/jquery-2.1.4.js"></script>-->
 <script src="lib/fastclick.js"></script>
 <script type="text/javascript" src="js/jquery.Spinner.js"></script>
-
 <script src="node_modules/vue/dist/vue.js"></script>
+<script>
+  function jump(val) {
+    let href = "address_edit.html?addressId="+val+"&";
+    let path=getUrlParam("path");
+    let array=getUrlParam("array");
+    if (path){
+      href+="path="+path+"&";
+      if(array){
+        href+="array="+array+"&";
+      }
+    }
+    window.location.href=href;
+  }
+
+  function jumpOrder(val) {
+    let path=getUrlParam("path");
+    if (path){
+    let href = "order_info.html?addressId="+val+"&";
+    let array=getUrlParam("array");
+      href+="path="+path+"&";
+      if(array){
+        href+="array="+array+"&";
+      }
+      window.location.href=href;
+    }
+  }
+</script>
 <script>
   let app = new Vue({
     el:"#app",
     data:{
       addressId:"",
       cusId:"",
-      addressList:[]
+      addressList:[],
+      href:"mine.html",
+      href2:"address_edit.html"
     },
     created:function () {
       $(function () {
-        app.cusId = $.cookie("cusId")
+        app.cusId = $.cookie("cusId");
+       let path=getUrlParam("path");
+       let array=getUrlParam("array");
+       if (path){
+         app.href = path+"?";
+         app.href2="address_edit.html?path="+path+"&";
+         if(array){
+           app.href+="array="+array+"&";
+           app.href2+="array="+array+"&";
+         }
+         let addressId = getUrlParam("addressId");
+         app.href+="addressId="+addressId+"&";
+       }
       })
       $(function () {
         $.ajax({
@@ -70,7 +111,10 @@
           }
         })
       })
-
+    },
+    methods:{
+      jump:jump,
+      jumpOrder:jumpOrder,
     }
   })
 </script>

@@ -14,7 +14,7 @@
 <body ontouchstart >
 <!--主体-->
 <header class="wy-header">
-  <div class="wy-header-icon-back"><span></span></div>
+  <a href="shopcart.html"><div class="wy-header-icon-back"><span></span></div></a>
   <div class="wy-header-title">订单详情</div>
 </header>
 <div id="order">
@@ -23,9 +23,9 @@
     <div class="weui-media-box_appmsg">
       <div class="weui-media-box__hd proinfo-txt-l" style="width:20px;"><span class="promotion-label-tit"><img src="images/icon_nav_city.png" /></span></div>
       <div class="weui-media-box__bd">
-        <a href="address_list.html" class="weui-cell_access">
-          <h4 class="address-name"><span>杜杰</span><span>13854652512</span></h4>
-          <div class="address-txt">宿迁市洋河新区电商产业园105号</div>
+        <a :href="href" class="weui-cell_access">
+          <h4 class="address-name"><span v-text="address.receiver"></span><span v-text="address.phone"></span></h4>
+          <div class="address-txt" v-text="address.address"></div>
         </a>
       </div>
       <div class="weui-media-box__hd proinfo-txt-l" style="width:16px;"><div class="weui-cell_access"><span class="weui-cell__ft"></span></div></div>
@@ -34,13 +34,13 @@
   <div class="wy-media-box weui-media-box_text" v-for="(item,index) in items" :key="index">
     <div class="weui-media-box__bd">
      <div class="weui-media-box_appmsg ord-pro-list">
-        <div class="weui-media-box__hd"><a href="pro_info.html"><img class="weui-media-box__thumb" :src="item.goodsImageAddr" alt=""></a></div>
+        <div class="weui-media-box__hd"><a href="javascript:;"><img class="weui-media-box__thumb" :src="item.goodsImageAddr" alt=""></a></div>
         <div class="weui-media-box__bd">
-          <h1 class="weui-media-box__desc"><a href="pro_info.html" class="ord-pro-link">{{item.goodsName}}</a></h1>
-          <p class="weui-media-box__desc">标签:<span>{{formatJson(item.spec)}}</span><span></span></p>
+          <h1 class="weui-media-box__desc"><a href="javascript:;" class="ord-pro-link" v-text="item.goodsName"></a></h1>
+          <p class="weui-media-box__desc">标签:<span v-text="formatJson(item.spec)"></span><span></span></p>
           <div class="clear mg-t-10">
-            <div class="wy-pro-pri fl">¥<em class="num font-15">{{formatPrice(item.goodsPrice)}}</em></div>
-            <div class="pro-amount fr">数量:{{item.number}}</div>
+            <div class="wy-pro-pri fl">¥<em class="num font-15" v-text="formatPrice(item.goodsPrice)"></em></div>
+            <div class="pro-amount fr" v-text="item.number"></div>
           </div>
         </div>
       </div>
@@ -80,8 +80,8 @@
     </div>
   </div>
     <div class="wy-media-box weui-media-box_text">
-    <div class="mg10-0 t-c">总金额：<span class="wy-pro-pri mg-tb-5">¥<em class="num font-20">{{formatPrice(total)}}</em></span></div>
-    <div class="mg10-0"><a href="javascript:submit();" class="weui-btn weui-btn_primary">微信付款</a></div>
+    <div class="mg10-0 t-c">总金额：<span class="wy-pro-pri mg-tb-5">¥<em class="num font-20" v-text="formatPrice(total)"></em></span></div>
+    <div class="mg10-0"><a href="javascript:;" onclick="submit()" class="weui-btn weui-btn_primary">提交订单</a></div>
   </div>
 </div>
 <script src="lib/jquery-2.1.4.js"></script> 
@@ -94,47 +94,53 @@
     FastClick.attach(document.body);
     vm.array=getUrlParam("array");
     load();
-    console.log(vm.array)
   });
 </script>
 <script type="text/javascript">
 
   var cusId = $.cookie("cusId");
   function  load() {
-
     if (!cusId) {
       alert("请您先登录")
       setTimeout("window.location.href='login.html'", 1000)
     }
-    query();
+    query();//查询商品信息
     //vm.total=vm.price+vm.sendPrice
+    loadAddress();//加载地址
   }
   function formatJson(val) {
     val = JSON.parse(val)
     return  val[4]+" "+val[12]+" "+val[13] ;
   }
   function loadAddress() {
+   vm.href="address_list.html?path=order_info.html&";
+    let array = getUrlParam("array");
+    if(array){
+      vm.href+=("array="+vm.array+"&")
+    }
+    let addressId = getUrlParam("addressId");
+    vm.href+="addressId="+addressId+"&";
     $.ajax({
 //请求方式
       type: "GET",
 //请求的媒体类型
       contentType: "application/json;charset=UTF-8",
 //请求地址
-      url: "http://www.housekeep.com:8084/Address/queryAddress",
+      url: "http://127.0.0.1:8084/address/queryAddressById",
 //数据，json字符串
       data: {
         "cusId":cusId,
+        "addressId":addressId,
       },
 //请求成功
       success: function (result) {
-        vm.address= result;
-        console.log( result)
+        vm.address=result;
       },
 //请求失败，包含具体的错误信息
       error: function (e) {
         console.log(e.status);
         console.log(e.responseText);
-// window.location.href="error.html";
+       // window.location.href=vm.href;
       }
     })
   }
@@ -155,7 +161,6 @@
       success: function (result) {
         vm.items = result.list;
         vm.total=result.total
-        console.log( result.total)
 
       },
 //请求失败，包含具体的错误信息
@@ -167,17 +172,41 @@
     })
   }
   function submit() {
-    alert("正在提交....")
+    $.ajax({
+      type: "POST",
+      url: "http://127.0.0.1:8084/orders/saveGoodsOrder",
+      async:false,
+      data: {
+        "cusId":cusId,
+        "addressId":vm.address.addressId,
+        "array":vm.array,
+      },
+      success: function(result) {
+        window.location.href="success.html";
+      },
+      error: function (e) {
+        console.log(e.status);
+        console.log(e.responseText);
+        window.location.href="error.html";
+      }
+    });
   }
 var vm = new Vue({
   el:"#order",
   data:{
     array:[],
     items:[],
-    address:"",
+    address:{
+      addressId:"",
+      receiver:"",
+      address: "",
+      phone:"",
+    },
     price:"",
     sendPrice:10,
-    total:""
+    total:"",
+    href:"",
+
   },
   methods:{
     formatPrice: formatPrice,
