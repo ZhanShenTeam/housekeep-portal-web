@@ -35,7 +35,7 @@
       <div id="tab1" class="weui-tab__bd-item weui-tab__bd-item--active">
         <div class="weui-panel weui-panel_access">
             <div class="weui-panel weui-panel_access" v-for="o in orders">
-                <div class="weui-panel__hd">单号：<span v-html="o.hoId"></span><span class="ord-status-txt-ts fr">交易成功</span></div>
+                <div class="weui-panel__hd">单号：<span v-html="o.hoId"></span><span class="ord-status-txt-ts fr" v-if="o.hoState==0">待付款</span><span class="ord-status-txt-ts fr" v-if="o.hoState==1">待服务</span><span class="ord-status-txt-ts fr" v-if="o.hoState==2">已完成</span></div>
                 <div class="weui-media-box__bd  pd-10">
                     <div class="weui-media-box_appmsg ord-pro-list">
                         <div class="weui-media-box__bd">
