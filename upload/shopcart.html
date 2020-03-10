@@ -140,7 +140,7 @@ function query(){
 //请求的媒体类型
     contentType: "application/json;charset=UTF-8",
 //请求地址
-    url: "http://www.housekeep.com:8084/goods/queryCartById",
+    url: "http://127.0.0.1:8084/goods/queryCartById",
 //数据，json字符串
     data: {
       "cusId": cusId},
@@ -170,7 +170,7 @@ function update(val1,val2,val3) {
 
   $.ajax({
     type: "post",
-    url: "http://www.housekeep.com:8084/goods/addCart",
+    url: "http://127.0.0.1:8084/goods/addCart",
     contentType: "application/json;charset=utf-8",
     data : JSON.stringify(json),
     success: function (data) {
@@ -188,7 +188,7 @@ function update(val1,val2,val3) {
       deleCart(val);
       $.ajax({
         type: "post",
-        url: "http://www.housekeep.com:8084/goods/deleteCart",
+        url: "http://127.0.0.1:8084/goods/deleteCart",
         contentType: "application/json;charset=utf-8",
         data : JSON.stringify(json),
         success: function (data) {

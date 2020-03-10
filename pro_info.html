@@ -335,7 +335,7 @@
 
     $.ajax({
         type: "post",
-        url: "http://www.housekeep.com:8084/goods/addCart",
+        url: "http://127.0.0.1:8084/goods/addCart",
         contentType: "application/json;charset=utf-8",
         data : JSON.stringify(json),
         success: function (data) {
@@ -361,7 +361,7 @@
       //请求的媒体类型
       contentType: "application/json;charset=UTF-8",
       //请求地址
-      url : "http://www.housekeep.com:8084/goods/queryGoodsDetailsById",
+      url : "http://127.0.0.1:8084/goods/queryGoodsDetailsById",
       //数据，json字符串
       data : {
         "goodsId":vm.goodsId,
