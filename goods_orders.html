@@ -36,21 +36,21 @@
                 <div id="tab1" class="weui-tab__bd-item weui-tab__bd-item--active">
                     <div class="weui-panel weui-panel_access" v-for="o in orders">
                         <div class="weui-panel weui-panel_access">
-                            <div class="weui-panel__hd">单号：<span v-html="o.goId"></span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span v-html="o.createTime"></span><span class="ord-status-txt-ts fr">交易成功</span></div>
+                            <div class="weui-panel__hd">单号：<span v-html="o.goId"></span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span v-html="o.createTime"></span><span class="ord-status-txt-ts fr"  v-if="o.goState==0">待付款</span><span class="ord-status-txt-ts fr"  v-if="o.goState==1">待发货</span><span class="ord-status-txt-ts fr"  v-if="o.goState==2">待收货</span><span class="ord-status-txt-ts fr"  v-if="o.goState==3">待评价</span><span class="ord-status-txt-ts fr"  v-if="o.goState==4">已评价</span></div>
                             <div class="weui-media-box__bd  pd-10" v-for="g in o.goodsGoodsorderList">
                                 <div class="weui-media-box_appmsg ord-pro-list">
-                                    <div class="weui-media-box__hd"><a href="pro_info.html"><img class="weui-media-box__thumb" :src="g.goods.goodsImageAddr" alt=""></a></div>
+                                    <div class="weui-media-box__hd"><a :href="'pro_info.html?goodsId='+g.goods.goodsId"><img class="weui-media-box__thumb" :src="g.goods.goodsImageAddr" alt=""></a></div>
                                     <div class="weui-media-box__bd">
-                                        <h1 class="weui-media-box__desc"><a href="pro_info.html" class="ord-pro-link"><span v-html="g.goods.goodsName"></span></a></h1>
+                                        <h1 class="weui-media-box__desc"><a :href="'pro_info.html?goodsId='+g.goods.goodsId" class="ord-pro-link"><span v-html="g.goods.goodsName"></span></a></h1>
                                         <div class="clear mg-t-10">
-                                            <div class="wy-pro-pri fl">¥<em class="num font-15" v-html="g.goods.goodsPrice"></em></div>
+                                            <div class="wy-pro-pri fl">¥<em class="num font-15" v-html="formatPrice(g.goods.goodsPrice)"></em></div>
                                             <div class="pro-amount fr"><span class="font-13">数量×<em class="name" v-html="g.goodsNumber"></em></span></div>
                                         </div>
                                     </div>
                                 </div>
                             </div>
                             <div class="ord-statistics">
-                                <span class="wy-pro-pri">应付金额：¥<em class="num font-15" v-html="o.money"></em></span>
+                                <span class="wy-pro-pri">应付金额：¥<em class="num font-15" v-html="formatPrice(o.money)"></em></span>
                             </div>
                             <div class="weui-panel__ft">
                                 <div class="weui-cell weui-cell_access weui-cell_link oder-opt-btnbox">
@@ -66,18 +66,18 @@
                         <div class="weui-panel__hd">单号：<span v-html="o.goId"></span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span v-html="o.createTime"></span><span class="ord-status-txt-ts fr">待付款</span></div>
                         <div class="weui-media-box__bd  pd-10" v-for="g in o.goodsGoodsorderList">
                             <div class="weui-media-box_appmsg ord-pro-list">
-                                <div class="weui-media-box__hd"><a href="pro_info.html"><img class="weui-media-box__thumb" :src="g.goods.goodsImageAddr" alt=""></a></div>
+                                <div class="weui-media-box__hd"><a :href="'pro_info.html?goodsId='+g.goods.goodsId"><img class="weui-media-box__thumb" :src="g.goods.goodsImageAddr" alt=""></a></div>
                                 <div class="weui-media-box__bd">
-                                    <h1 class="weui-media-box__desc"><a href="pro_info.html" class="ord-pro-link"><span v-html="g.goods.goodsName"></span></a></h1>
+                                    <h1 class="weui-media-box__desc"><a :href="'pro_info.html?goodsId='+g.goods.goodsId" class="ord-pro-link"><span v-html="g.goods.goodsName"></span></a></h1>
                                     <div class="clear mg-t-10">
-                                        <div class="wy-pro-pri fl">¥<em class="num font-15" v-html="g.goods.goodsPrice"></em></div>
+                                        <div class="wy-pro-pri fl">¥<em class="num font-15" v-html="formatPrice(g.goods.goodsPrice)"></em></div>
                                         <div class="pro-amount fr"><span class="font-13">数量×<em class="name" v-html="g.goodsNumber"></em></span></div>
                                     </div>
                                 </div>
                             </div>
                         </div>
                         <div class="ord-statistics">
-                            <span class="wy-pro-pri">应付金额：¥<em class="num font-15" v-html="o.money"></em></span>
+                            <span class="wy-pro-pri">应付金额：¥<em class="num font-15" v-html="formatPrice(o.money)"></em></span>
                         </div>
                         <div class="weui-panel__ft">
                             <div class="weui-cell weui-cell_access weui-cell_link oder-opt-btnbox">
@@ -92,18 +92,18 @@
                         <div class="weui-panel__hd">单号：<span v-html="o.goId"></span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span v-html="o.createTime"></span><span class="ord-status-txt-ts fr">待发货</span></div>
                         <div class="weui-media-box__bd  pd-10" v-for="g in o.goodsGoodsorderList">
                             <div class="weui-media-box_appmsg ord-pro-list">
-                                <div class="weui-media-box__hd"><a href="pro_info.html"><img class="weui-media-box__thumb" :src="g.goods.goodsImageAddr" alt=""></a></div>
+                                <div class="weui-media-box__hd"><a :href="'pro_info.html?goodsId='+g.goods.goodsId"><img class="weui-media-box__thumb" :src="g.goods.goodsImageAddr" alt=""></a></div>
                                 <div class="weui-media-box__bd">
-                                    <h1 class="weui-media-box__desc"><a href="pro_info.html" class="ord-pro-link"><span v-html="g.goods.goodsName"></span></a></h1>
+                                    <h1 class="weui-media-box__desc"><a :href="'pro_info.html?goodsId='+g.goods.goodsId" class="ord-pro-link"><span v-html="g.goods.goodsName"></span></a></h1>
                                     <div class="clear mg-t-10">
-                                        <div class="wy-pro-pri fl">¥<em class="num font-15" v-html="g.goods.goodsPrice"></em></div>
+                                        <div class="wy-pro-pri fl">¥<em class="num font-15" v-html="formatPrice(g.goods.goodsPrice)"></em></div>
                                         <div class="pro-amount fr"><span class="font-13">数量×<em class="name" v-html="g.goodsNumber"></em></span></div>
                                     </div>
                                 </div>
                             </div>
                         </div>
                         <div class="ord-statistics">
-                            <span class="wy-pro-pri">应付金额：¥<em class="num font-15" v-html="o.money"></em></span>
+                            <span class="wy-pro-pri">应付金额：¥<em class="num font-15" v-html="formatPrice(o.money)"></em></span>
                         </div>
                         <div class="weui-panel__ft">
                             <div class="weui-cell weui-cell_access weui-cell_link oder-opt-btnbox">
@@ -118,18 +118,18 @@
                         <div class="weui-panel__hd">单号：<span v-html="o.goId"></span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span v-html="o.createTime"></span><span class="ord-status-txt-ts fr">待收货</span></div>
                         <div class="weui-media-box__bd  pd-10" v-for="g in o.goodsGoodsorderList">
                             <div class="weui-media-box_appmsg ord-pro-list">
-                                <div class="weui-media-box__hd"><a href="pro_info.html"><img class="weui-media-box__thumb" :src="g.goods.goodsImageAddr" alt=""></a></div>
+                                <div class="weui-media-box__hd"><a :href="'pro_info.html?goodsId='+g.goods.goodsId"><img class="weui-media-box__thumb" :src="g.goods.goodsImageAddr" alt=""></a></div>
                                 <div class="weui-media-box__bd">
-                                    <h1 class="weui-media-box__desc"><a href="pro_info.html" class="ord-pro-link"><span v-html="g.goods.goodsName"></span></a></h1>
+                                    <h1 class="weui-media-box__desc"><a :href="'pro_info.html?goodsId='+g.goods.goodsId" class="ord-pro-link"><span v-html="g.goods.goodsName"></span></a></h1>
                                     <div class="clear mg-t-10">
-                                        <div class="wy-pro-pri fl">¥<em class="num font-15" v-html="g.goods.goodsPrice"></em></div>
+                                        <div class="wy-pro-pri fl">¥<em class="num font-15" v-html="formatPrice(g.goods.goodsPrice)"></em></div>
                                         <div class="pro-amount fr"><span class="font-13">数量×<em class="name" v-html="g.goodsNumber"></em></span></div>
                                     </div>
                                 </div>
                             </div>
                         </div>
                         <div class="ord-statistics">
-                            <span class="wy-pro-pri">应付金额：¥<em class="num font-15" v-html="o.money"></em></span>
+                            <span class="wy-pro-pri">应付金额：¥<em class="num font-15" v-html="formatPrice(o.money)"></em></span>
                         </div>
                         <div class="weui-panel__ft">
                             <div class="weui-cell weui-cell_access weui-cell_link oder-opt-btnbox">
@@ -148,27 +148,29 @@
 
                 <div id="tab5" class="weui-tab__bd-item weui-tab__bd-item--active">
                     <div class="weui-panel weui-panel_access" v-for="o in orders">
+                        <div v-for="g in o.goodsGoodsorderList">
                         <div class="weui-panel__hd">单号：<span v-html="o.goId"></span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span v-html="o.createTime"></span><span class="ord-status-txt-ts fr">待评价</span></div>
-                        <div class="weui-media-box__bd  pd-10" v-for="g in o.goodsGoodsorderList">
+                        <div class="weui-media-box__bd  pd-10" >
                             <div class="weui-media-box_appmsg ord-pro-list">
-                                <div class="weui-media-box__hd"><a href="pro_info.html"><img class="weui-media-box__thumb" :src="g.goods.goodsImageAddr" alt=""></a></div>
+                                <div class="weui-media-box__hd"><a :href="'pro_info.html?goodsId='+g.goods.goodsId"><img class="weui-media-box__thumb" :src="g.goods.goodsImageAddr" alt=""></a></div>
                                 <div class="weui-media-box__bd">
-                                    <h1 class="weui-media-box__desc"><a href="pro_info.html" class="ord-pro-link"><span v-html="g.goods.goodsName"></span></a></h1>
+                                    <h1 class="weui-media-box__desc"><a :href="'pro_info.html?goodsId='+g.goods.goodsId" class="ord-pro-link"><span v-html="g.goods.goodsName"></span></a></h1>
                                     <div class="clear mg-t-10">
-                                        <div class="wy-pro-pri fl">¥<em class="num font-15" v-html="g.goods.goodsPrice"></em></div>
+                                        <div class="wy-pro-pri fl">¥<em class="num font-15" v-html="formatPrice(g.goods.goodsPrice)"></em></div>
                                         <div class="pro-amount fr"><span class="font-13">数量×<em class="name" v-html="g.goodsNumber"></em></span></div>
                                     </div>
                                 </div>
                             </div>
                         </div>
                         <div class="ord-statistics">
-                            <span class="wy-pro-pri">应付金额：¥<em class="num font-15" v-html="o.money"></em></span>
+                            <span class="wy-pro-pri">应付金额：¥<em class="num font-15" v-html="formatPrice(o.money)"></em></span>
                         </div>
                         <div class="weui-panel__ft">
                             <div class="weui-cell weui-cell_access weui-cell_link oder-opt-btnbox">
-                                <!--<a :href="'goods_comment.html?goodsId='+o.goods.goodsId+'&goId='+o.goId" class="ords-btn-com">去评价</a>-->
+                                <a :href="'goods_comment.html?goodsId='+g.goods.goodsId+'&goId='+g.goId" class="ords-btn-com">去评价</a>
                             </div>
                         </div>
+                    </div>
                     </div>
                 </div>
             </div>
@@ -178,7 +180,7 @@
 
 <!--<script src="lib/jquery-2.1.4.js"></script>-->
 <script src="lib/fastclick.js"></script>
-
+<script src="js/Marcel.js"></script>
 <script src="node_modules/vue/dist/vue.js"></script>
 
 <script>
@@ -191,6 +193,7 @@
             orders:[]
         },
         methods:{
+            formatPrice:formatPrice,
             delete1(goId){
                 app.goId = goId
             },
